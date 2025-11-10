@@ -1,0 +1,45 @@
+{
+  "name": "empreenda-facil",
+  "version": "2.0.0",
+  "description": "Sistema completo para planejamento e abertura de empresas no Brasil",
+  "main": "index.html",
+  "scripts": {
+    "start": "python3 -m http.server 8000 || python -m SimpleHTTPServer 8000",
+    "serve": "npx serve .",
+    "test": "echo \"No tests configured yet\"",
+    "build": "echo \"This is a static project, no build needed\""
+  },
+  "keywords": [
+    "empreendedorismo",
+    "empresa",
+    "cnae",
+    "brasil",
+    "negocio",
+    "startup",
+    "planejamento",
+    "custos",
+    "abertura-empresa"
+  ],
+  "author": "Seu Nome",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seu-usuario/empreenda-facil.git"
+  },
+  "bugs": {
+    "url": "https://github.com/seu-usuario/empreenda-facil/issues"
+  },
+  "homepage": "https://seu-usuario.github.io/empreenda-facil/",
+  "devDependencies": {
+    "serve": "^14.2.0"
+  },
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}
