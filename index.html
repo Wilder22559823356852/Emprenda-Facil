@@ -1,2306 +1,1208 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    />
-    <meta
-      name="description"
-      content="Sistema completo para planejamento e abertura de empresas no Brasil"
-    />
-    <meta name="author" content="Empreenda Fácil" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Sistema completo para planejamento e abertura de empresas no Brasil">
+    <meta name="author" content="Empreenda Fácil">
     <title>Empreenda Fácil - Sistema de Abertura de Empresas</title>
-
+    
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-
+    
     <!-- EmailJS -->
-    <script
-      type="text/javascript"
-      src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"
-    ></script>
-
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    
     <style>
-      /* Reset e Base */
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        -webkit-tap-highlight-color: transparent;
-      }
-
-      html {
-        font-size: 16px;
-        scroll-behavior: smooth;
-      }
-
-      body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-          Oxygen, Ubuntu, Cantarell, sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        padding: 10px;
-        overflow-x: hidden;
-      }
-
-      /* Container Principal */
-      .main-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        background: white;
-        border-radius: 15px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-        overflow: hidden;
-      }
-
-      /* Header */
-      .header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 20px;
-        text-align: center;
-      }
-
-      .header h1 {
-        font-size: clamp(1.5rem, 5vw, 2.5rem);
-        margin-bottom: 5px;
-        font-weight: 700;
-      }
-
-      .header p {
-        font-size: clamp(0.9rem, 2.5vw, 1.1rem);
-        opacity: 0.95;
-      }
-
-      /* Sistema de Abas */
-      .tab-nav {
-        display: flex;
-        background: #f8f9fa;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: thin;
-      }
-
-      .tab-nav::-webkit-scrollbar {
-        height: 4px;
-      }
-
-      .tab-nav::-webkit-scrollbar-thumb {
-        background: #667eea;
-        border-radius: 2px;
-      }
-
-      .tab-btn {
-        padding: 12px 20px;
-        border: none;
-        background: none;
-        color: #666;
-        font-weight: 600;
-        cursor: pointer;
-        white-space: nowrap;
-        transition: all 0.3s;
-        border-bottom: 3px solid transparent;
-        font-size: clamp(0.85rem, 2vw, 1rem);
-        flex-shrink: 0;
-      }
-
-      .tab-btn:hover {
-        background: #e9ecef;
-        color: #333;
-      }
-
-      .tab-btn.active {
-        color: #667eea;
-        background: white;
-        border-bottom-color: #667eea;
-      }
-
-      /* Conteúdo das Abas */
-      .tab-content {
-        display: none;
-        padding: 20px;
-        animation: fadeIn 0.5s;
-      }
-
-      .tab-content.active {
-        display: block;
-      }
-
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(10px);
+        /* Reset e Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
-        to {
-          opacity: 1;
-          transform: translateY(0);
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
         }
-      }
 
-      /* Títulos e Seções */
-      h2 {
-        color: #333;
-        margin-bottom: 20px;
-        font-size: clamp(1.3rem, 3vw, 1.8rem);
-        padding-bottom: 10px;
-        border-bottom: 2px solid #667eea;
-      }
-
-      h3 {
-        color: #555;
-        margin: 15px 0 10px 0;
-        font-size: clamp(1.1rem, 2.5vw, 1.3rem);
-      }
-
-      /* Formulários */
-      .form-group {
-        margin-bottom: 15px;
-      }
-
-      .form-group label {
-        display: block;
-        margin-bottom: 5px;
-        color: #555;
-        font-weight: 600;
-        font-size: clamp(0.9rem, 2vw, 1rem);
-      }
-
-      .form-control {
-        width: 100%;
-        padding: 10px;
-        border: 2px solid #e0e0e0;
-        border-radius: 8px;
-        font-size: 16px; /* Previne zoom no iOS */
-        transition: all 0.3s;
-        -webkit-appearance: none;
-      }
-
-      .form-control:focus {
-        outline: none;
-        border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-      }
-
-      select.form-control {
-        cursor: pointer;
-        background: white;
-      }
-
-      textarea.form-control {
-        min-height: 80px;
-        resize: vertical;
-      }
-
-      /* Grid Responsivo */
-      .grid {
-        display: grid;
-        gap: 15px;
-        margin-bottom: 20px;
-      }
-
-      .grid-2 {
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      }
-
-      .grid-3 {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      }
-
-      /* Botões */
-      .btn {
-        padding: 12px 24px;
-        border: none;
-        border-radius: 8px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s;
-        font-size: clamp(0.9rem, 2vw, 1rem);
-        display: inline-block;
-        text-align: center;
-        min-width: 120px;
-      }
-
-      .btn-primary {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-      }
-
-      .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-      }
-
-      .btn-secondary {
-        background: #6c757d;
-        color: white;
-      }
-
-      .btn-secondary:hover {
-        background: #5a6268;
-      }
-
-      .btn-success {
-        background: #28a745;
-        color: white;
-      }
-
-      .btn-success:hover {
-        background: #218838;
-      }
-
-      .btn-danger {
-        background: #dc3545;
-        color: white;
-        padding: 8px 15px;
-        font-size: 0.9rem;
-      }
-
-      .btn-danger:hover {
-        background: #c82333;
-      }
-
-      .btn-group {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-        margin-top: 20px;
-      }
-
-      /* Cards e Resultados */
-      .card {
-        background: #f8f9fa;
-        border-radius: 10px;
-        padding: 15px;
-        margin-bottom: 15px;
-        border: 1px solid #e0e0e0;
-      }
-
-      .card-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 10px;
-      }
-
-      .card-title {
-        font-weight: 600;
-        color: #667eea;
-        font-size: clamp(1rem, 2.5vw, 1.2rem);
-      }
-
-      /* CNAE Search */
-      .cnae-search-container {
-        position: relative;
-      }
-
-      .cnae-suggestions {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: white;
-        border: 2px solid #667eea;
-        border-top: none;
-        border-radius: 0 0 8px 8px;
-        max-height: 200px;
-        overflow-y: auto;
-        z-index: 100;
-        display: none;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      }
-
-      .cnae-suggestions.active {
-        display: block;
-      }
-
-      .cnae-item {
-        padding: 10px;
-        cursor: pointer;
-        border-bottom: 1px solid #f0f0f0;
-        transition: background 0.2s;
-        font-size: clamp(0.85rem, 2vw, 0.95rem);
-      }
-
-      .cnae-item:hover {
-        background: #f0f7ff;
-      }
-
-      .cnae-codigo {
-        font-weight: bold;
-        color: #667eea;
-        margin-right: 5px;
-      }
-
-      .cnae-selected {
-        background: #f0f7ff;
-        padding: 10px;
-        border-radius: 8px;
-        margin-top: 10px;
-        border-left: 3px solid #667eea;
-      }
-
-      /* Funcionários */
-      .funcionario-card {
-        background: #f8f9fa;
-        padding: 15px;
-        border-radius: 8px;
-        margin-bottom: 15px;
-        border-left: 3px solid #667eea;
-      }
-
-      /* Resultados */
-      .result-card {
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-        padding: 15px;
-        border-radius: 10px;
-        margin-bottom: 15px;
-      }
-
-      .result-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 8px 0;
-        border-bottom: 1px solid #dee2e6;
-        font-size: clamp(0.9rem, 2vw, 1rem);
-      }
-
-      .result-item:last-child {
-        border-bottom: none;
-      }
-
-      .result-label {
-        color: #666;
-      }
-
-      .result-value {
-        font-weight: bold;
-        color: #333;
-      }
-
-      .result-total {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 20px;
-        border-radius: 10px;
-        text-align: center;
-        margin: 20px 0;
-      }
-
-      .result-total h3 {
-        color: white;
-        margin-bottom: 10px;
-      }
-
-      .result-total .value {
-        font-size: clamp(1.5rem, 4vw, 2rem);
-        font-weight: bold;
-      }
-
-      /* Alertas */
-      .alert {
-        padding: 12px;
-        border-radius: 8px;
-        margin-bottom: 15px;
-        font-size: clamp(0.9rem, 2vw, 1rem);
-      }
-
-      .alert-info {
-        background: #cfe2ff;
-        color: #084298;
-        border: 1px solid #b6d4fe;
-      }
-
-      .alert-success {
-        background: #d1e7dd;
-        color: #0f5132;
-        border: 1px solid #badbcc;
-      }
-
-      .alert-warning {
-        background: #fff3cd;
-        color: #664d03;
-        border: 1px solid #ffecb5;
-      }
-
-      .alert-danger {
-        background: #f8d7da;
-        color: #842029;
-        border: 1px solid #f5c2c7;
-      }
-
-      /* Gráficos */
-      .chart-container {
-        position: relative;
-        height: 300px;
-        margin: 20px 0;
-      }
-
-      /* Loading */
-      .loading {
-        display: none;
-        text-align: center;
-        padding: 20px;
-      }
-
-      .loading.active {
-        display: block;
-      }
-
-      .spinner {
-        border: 3px solid #f3f3f3;
-        border-top: 3px solid #667eea;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        animation: spin 1s linear infinite;
-        margin: 0 auto;
-      }
-
-      @keyframes spin {
-        0% {
-          transform: rotate(0deg);
-        }
-        100% {
-          transform: rotate(360deg);
-        }
-      }
-
-      /* Mobile Otimizações */
-      @media (max-width: 768px) {
         body {
-          padding: 5px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+            overflow-x: hidden;
         }
 
+        /* Container Principal */
         .main-container {
-          border-radius: 10px;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
         }
 
+        /* Header */
         .header {
-          padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
         }
 
+        .header h1 {
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            opacity: 0.95;
+        }
+
+        /* Sistema de Abas */
+        .tab-nav {
+            display: flex;
+            background: #f8f9fa;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+        }
+
+        .tab-nav::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .tab-nav::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 2px;
+        }
+
+        .tab-btn {
+            padding: 12px 20px;
+            border: none;
+            background: none;
+            color: #666;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            font-size: clamp(0.85rem, 2vw, 1rem);
+            flex-shrink: 0;
+        }
+
+        .tab-btn:hover {
+            background: #e9ecef;
+            color: #333;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            background: white;
+            border-bottom-color: #667eea;
+        }
+
+        /* Conteúdo das Abas */
         .tab-content {
-          padding: 15px;
+            display: none;
+            padding: 20px;
+            animation: fadeIn 0.5s;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { 
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Títulos e Seções */
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: clamp(1.3rem, 3vw, 1.8rem);
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        h3 {
+            color: #555;
+            margin: 15px 0 10px 0;
+            font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+        }
+
+        /* Formulários */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 600;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px; /* Previne zoom no iOS */
+            transition: all 0.3s;
+            -webkit-appearance: none;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        select.form-control {
+            cursor: pointer;
+            background: white;
+        }
+
+        textarea.form-control {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        /* Grid Responsivo */
+        .grid {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+
+        /* Botões */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+            display: inline-block;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
         }
 
         .btn-group {
-          flex-direction: column;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
         }
 
-        .btn {
-          width: 100%;
+        /* Cards e Resultados */
+        .card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #e0e0e0;
         }
 
-        .grid-2,
-        .grid-3 {
-          grid-template-columns: 1fr;
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
         }
 
+        .card-title {
+            font-weight: 600;
+            color: #667eea;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+        }
+
+        /* CNAE Search */
+        .cnae-search-container {
+            position: relative;
+        }
+
+        .cnae-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid #667eea;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .cnae-suggestions.active {
+            display: block;
+        }
+
+        .cnae-item {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.2s;
+            font-size: clamp(0.85rem, 2vw, 0.95rem);
+        }
+
+        .cnae-item:hover {
+            background: #f0f7ff;
+        }
+
+        .cnae-codigo {
+            font-weight: bold;
+            color: #667eea;
+            margin-right: 5px;
+        }
+
+        .cnae-selected {
+            background: #f0f7ff;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border-left: 3px solid #667eea;
+        }
+
+        /* Funcionários */
+        .funcionario-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 3px solid #667eea;
+        }
+
+        /* Resultados */
+        .result-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #dee2e6;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            color: #666;
+        }
+
+        .result-value {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .result-total {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .result-total h3 {
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .result-total .value {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            font-weight: bold;
+        }
+
+        /* Alertas */
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .alert-info {
+            background: #cfe2ff;
+            color: #084298;
+            border: 1px solid #b6d4fe;
+        }
+
+        .alert-success {
+            background: #d1e7dd;
+            color: #0f5132;
+            border: 1px solid #badbcc;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #664d03;
+            border: 1px solid #ffecb5;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            color: #842029;
+            border: 1px solid #f5c2c7;
+        }
+
+        /* Gráficos */
         .chart-container {
-          height: 250px;
-        }
-      }
-
-      /* iPhone Notch Safe Area */
-      @supports (padding: env(safe-area-inset-top)) {
-        .header {
-          padding-top: calc(20px + env(safe-area-inset-top));
-        }
-      }
-
-      /* Print */
-      @media print {
-        body {
-          background: white;
+            position: relative;
+            height: 300px;
+            margin: 20px 0;
         }
 
-        .main-container {
-          box-shadow: none;
+        /* Loading */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
         }
 
-        .tab-nav,
-        .btn {
-          display: none;
+        .loading.active {
+            display: block;
         }
 
-        .tab-content {
-          display: block !important;
-          page-break-after: always;
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
         }
-      }
 
-      /* Acessibilidade */
-      .sr-only {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
-        border: 0;
-      }
-
-      /* Animações */
-      .fade-in {
-        animation: fadeIn 0.5s ease-in;
-      }
-
-      .slide-up {
-        animation: slideUp 0.5s ease-out;
-      }
-
-      @keyframes slideUp {
-        from {
-          transform: translateY(20px);
-          opacity: 0;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
-        to {
-          transform: translateY(0);
-          opacity: 1;
+
+        /* Mobile Otimizações */
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+
+            .main-container {
+                border-radius: 10px;
+            }
+
+            .header {
+                padding: 15px;
+            }
+
+            .tab-content {
+                padding: 15px;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-container {
+                height: 250px;
+            }
         }
-      }
+
+        /* iPhone Notch Safe Area */
+        @supports (padding: env(safe-area-inset-top)) {
+            .header {
+                padding-top: calc(20px + env(safe-area-inset-top));
+            }
+        }
+
+        /* Print */
+        @media print {
+            body {
+                background: white;
+            }
+
+            .main-container {
+                box-shadow: none;
+            }
+
+            .tab-nav, .btn {
+                display: none;
+            }
+
+            .tab-content {
+                display: block !important;
+                page-break-after: always;
+            }
+        }
+
+        /* Acessibilidade */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Animações */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .slide-up {
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
     </style>
-  </head>
-  <body>
+</head>
+<body>
     <div class="main-container">
-      <!-- Header -->
-      <header class="header">
-        <h1>🚀 Empreenda Fácil</h1>
-        <p>Sistema Completo para Abertura de Empresas</p>
-      </header>
+        <!-- Header -->
+        <header class="header">
+            <h1>🚀 Empreenda Fácil</h1>
+            <p>Sistema Completo para Abertura de Empresas</p>
+        </header>
 
-      <!-- Navegação por Abas -->
-      <nav class="tab-nav" role="tablist">
-        <button class="tab-btn active" onclick="showTab('empresa')" role="tab">
-          📝 Empresa
-        </button>
-        <button class="tab-btn" onclick="showTab('cnae')" role="tab">
-          📋 CNAEs
-        </button>
-        <button class="tab-btn" onclick="showTab('funcionarios')" role="tab">
-          👥 Funcionários
-        </button>
-        <button class="tab-btn" onclick="showTab('custos')" role="tab">
-          💰 Custos
-        </button>
-        <button class="tab-btn" onclick="showTab('resultado')" role="tab">
-          📊 Resultado
-        </button>
-        <button class="tab-btn" onclick="showTab('relatorio')" role="tab">
-          📄 Relatório
-        </button>
-      </nav>
+        <!-- Navegação por Abas -->
+        <nav class="tab-nav" role="tablist">
+            <button class="tab-btn active" onclick="showTab('empresa')" role="tab">📝 Empresa</button>
+            <button class="tab-btn" onclick="showTab('cnae')" role="tab">📋 CNAEs</button>
+            <button class="tab-btn" onclick="showTab('funcionarios')" role="tab">👥 Funcionários</button>
+            <button class="tab-btn" onclick="showTab('custos')" role="tab">💰 Custos</button>
+            <button class="tab-btn" onclick="showTab('resultado')" role="tab">📊 Resultado</button>
+            <button class="tab-btn" onclick="showTab('relatorio')" role="tab">📄 Relatório</button>
+        </nav>
 
-      <!-- Tab 1: Dados da Empresa -->
-      <div id="empresa" class="tab-content active">
-        <h2>Dados da Empresa</h2>
+        <!-- Tab 1: Dados da Empresa -->
+        <div id="empresa" class="tab-content active">
+            <h2>Dados da Empresa</h2>
+            
+            <div class="form-group">
+                <label for="nomeEmpresa">Nome da Empresa *</label>
+                <input type="text" id="nomeEmpresa" class="form-control" placeholder="Digite o nome da sua empresa">
+            </div>
 
-        <div class="form-group">
-          <label for="nomeEmpresa">Nome da Empresa *</label>
-          <input
-            type="text"
-            id="nomeEmpresa"
-            class="form-control"
-            placeholder="Digite o nome da sua empresa"
-          />
+            <div class="grid grid-2">
+                <div class="form-group">
+                    <label for="emailContato">Email para Contato *</label>
+                    <input type="email" id="emailContato" class="form-control" placeholder="seu@email.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="telefone">Telefone *</label>
+                    <input type="tel" id="telefone" class="form-control" placeholder="(11) 99999-9999">
+                </div>
+            </div>
+
+            <div class="grid grid-3">
+                <div class="form-group">
+                    <label for="capitalInicial">Capital Inicial (R$) *</label>
+                    <input type="number" id="capitalInicial" class="form-control" placeholder="50000" value="50000">
+                </div>
+
+                <div class="form-group">
+                    <label for="cidade">Cidade *</label>
+                    <select id="cidade" class="form-control" onchange="calcularCustos()">
+                        <option value="">Selecione...</option>
+                        <option value="sp">São Paulo - SP</option>
+                        <option value="rj">Rio de Janeiro - RJ</option>
+                        <option value="mg">Belo Horizonte - MG</option>
+                        <option value="df">Brasília - DF</option>
+                        <option value="pr">Curitiba - PR</option>
+                        <option value="rs">Porto Alegre - RS</option>
+                        <option value="ba">Salvador - BA</option>
+                        <option value="ce">Fortaleza - CE</option>
+                        <option value="pe">Recife - PE</option>
+                        <option value="am">Manaus - AM</option>
+                        <option value="go">Goiânia - GO</option>
+                        <option value="sc">Florianópolis - SC</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="numeroSocios">Número de Sócios *</label>
+                    <input type="number" id="numeroSocios" class="form-control" value="1" min="1">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="ramoAtividade">Ramo de Atividade *</label>
+                <select id="ramoAtividade" class="form-control" onchange="sugerirCNAEs()">
+                    <option value="">Selecione o ramo...</option>
+                    <option value="alimentacao">Alimentação e Bebidas</option>
+                    <option value="comercio">Comércio Varejista</option>
+                    <option value="servicos">Prestação de Serviços</option>
+                    <option value="tecnologia">Tecnologia e Informática</option>
+                    <option value="saude">Saúde e Bem-estar</option>
+                    <option value="educacao">Educação e Treinamento</option>
+                    <option value="industria">Indústria e Manufatura</option>
+                    <option value="construcao">Construção Civil</option>
+                    <option value="transporte">Transporte e Logística</option>
+                    <option value="consultoria">Consultoria e Assessoria</option>
+                    <option value="imobiliario">Mercado Imobiliário</option>
+                    <option value="turismo">Turismo e Hotelaria</option>
+                    <option value="moda">Moda e Vestuário</option>
+                    <option value="beleza">Beleza e Estética</option>
+                    <option value="pet">Pet e Veterinária</option>
+                    <option value="automotivo">Serviços Automotivos</option>
+                </select>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="showTab('cnae')">Próximo: CNAEs →</button>
+            </div>
         </div>
 
-        <div class="grid grid-2">
-          <div class="form-group">
-            <label for="emailContato">Email para Contato *</label>
-            <input
-              type="email"
-              id="emailContato"
-              class="form-control"
-              placeholder="seu@email.com"
-            />
-          </div>
+        <!-- Tab 2: CNAEs -->
+        <div id="cnae" class="tab-content">
+            <h2>Classificação Nacional de Atividades Econômicas</h2>
+            
+            <div class="alert alert-info">
+                <strong>ℹ️ Importante:</strong> O CNAE define as atividades que sua empresa pode exercer.
+            </div>
 
-          <div class="form-group">
-            <label for="telefone">Telefone *</label>
-            <input
-              type="tel"
-              id="telefone"
-              class="form-control"
-              placeholder="(11) 99999-9999"
-            />
-          </div>
+            <div class="form-group">
+                <label for="buscaCnaePrincipal">CNAE Principal *</label>
+                <div class="cnae-search-container">
+                    <input type="text" id="buscaCnaePrincipal" class="form-control" 
+                           placeholder="Digite palavras-chave (ex: restaurante, consultoria, loja)"
+                           onkeyup="buscarCNAE('principal')">
+                    <div id="sugestoesPrincipal" class="cnae-suggestions"></div>
+                </div>
+                <div id="cnaePrincipalSelecionado"></div>
+            </div>
+
+            <h3>CNAEs Secundários (opcional)</h3>
+            <button class="btn btn-secondary" onclick="adicionarCNAESecundario()">+ Adicionar CNAE Secundário</button>
+            <div id="cnaesSecundarios"></div>
+
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="showTab('empresa')">← Voltar</button>
+                <button class="btn btn-primary" onclick="showTab('funcionarios')">Próximo: Funcionários →</button>
+            </div>
         </div>
 
-        <div class="grid grid-3">
-          <div class="form-group">
-            <label for="capitalInicial">Capital Inicial (R$) *</label>
-            <input
-              type="number"
-              id="capitalInicial"
-              class="form-control"
-              placeholder="50000"
-              value="50000"
-            />
-          </div>
+        <!-- Tab 3: Funcionários -->
+        <div id="funcionarios" class="tab-content">
+            <h2>Quadro de Funcionários</h2>
+            
+            <div class="alert alert-info">
+                O sistema calcula automaticamente todos os encargos trabalhistas.
+            </div>
 
-          <div class="form-group">
-            <label for="cidade">Cidade *</label>
-            <select
-              id="cidade"
-              class="form-control"
-              onchange="calcularCustos()"
-            >
-              <option value="">Selecione...</option>
-              <option value="sp">São Paulo - SP</option>
-              <option value="rj">Rio de Janeiro - RJ</option>
-              <option value="mg">Belo Horizonte - MG</option>
-              <option value="df">Brasília - DF</option>
-              <option value="pr">Curitiba - PR</option>
-              <option value="rs">Porto Alegre - RS</option>
-              <option value="ba">Salvador - BA</option>
-              <option value="ce">Fortaleza - CE</option>
-              <option value="pe">Recife - PE</option>
-              <option value="am">Manaus - AM</option>
-              <option value="go">Goiânia - GO</option>
-              <option value="sc">Florianópolis - SC</option>
-            </select>
-          </div>
+            <div class="form-group">
+                <label for="qtdFuncionarios">Quantos funcionários você pretende contratar?</label>
+                <input type="number" id="qtdFuncionarios" class="form-control" value="0" min="0" onchange="gerarCamposFuncionarios()">
+            </div>
 
-          <div class="form-group">
-            <label for="numeroSocios">Número de Sócios *</label>
-            <input
-              type="number"
-              id="numeroSocios"
-              class="form-control"
-              value="1"
-              min="1"
-            />
-          </div>
+            <div id="listaFuncionarios"></div>
+
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="showTab('cnae')">← Voltar</button>
+                <button class="btn btn-primary" onclick="showTab('custos')">Próximo: Custos →</button>
+            </div>
         </div>
 
-        <div class="form-group">
-          <label for="ramoAtividade">Ramo de Atividade *</label>
-          <select
-            id="ramoAtividade"
-            class="form-control"
-            onchange="sugerirCNAEs()"
-          >
-            <option value="">Selecione o ramo...</option>
-            <option value="alimentacao">Alimentação e Bebidas</option>
-            <option value="comercio">Comércio Varejista</option>
-            <option value="servicos">Prestação de Serviços</option>
-            <option value="tecnologia">Tecnologia e Informática</option>
-            <option value="saude">Saúde e Bem-estar</option>
-            <option value="educacao">Educação e Treinamento</option>
-            <option value="industria">Indústria e Manufatura</option>
-            <option value="construcao">Construção Civil</option>
-            <option value="transporte">Transporte e Logística</option>
-            <option value="consultoria">Consultoria e Assessoria</option>
-            <option value="imobiliario">Mercado Imobiliário</option>
-            <option value="turismo">Turismo e Hotelaria</option>
-            <option value="moda">Moda e Vestuário</option>
-            <option value="beleza">Beleza e Estética</option>
-            <option value="pet">Pet e Veterinária</option>
-            <option value="automotivo">Serviços Automotivos</option>
-          </select>
+        <!-- Tab 4: Custos -->
+        <div id="custos" class="tab-content">
+            <h2>Custos de Abertura e Operacionais</h2>
+            
+            <div class="result-card">
+                <h3>📄 Custos de Abertura</h3>
+                <div class="result-item">
+                    <span class="result-label">Registro na Junta Comercial:</span>
+                    <span class="result-value" id="custoJunta">R$ 0,00</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Alvará de Funcionamento:</span>
+                    <span class="result-value" id="custoAlvara">R$ 0,00</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Certificado Digital:</span>
+                    <span class="result-value" id="custoCertificado">R$ 0,00</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Honorários Contador (abertura):</span>
+                    <span class="result-value" id="custoContador">R$ 0,00</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label"><strong>Total Abertura:</strong></span>
+                    <span class="result-value"><strong id="totalAbertura">R$ 0,00</strong></span>
+                </div>
+            </div>
+
+            <div class="result-card">
+                <h3>💼 Custos Operacionais Mensais</h3>
+                <div class="result-item">
+                    <span class="result-label">Folha de Pagamento:</span>
+                    <span class="result-value" id="custoFolha">R$ 0,00</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Aluguel:</span>
+                    <span class="result-value" id="custoAluguel">R$ 0,00</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Energia/Água/Internet:</span>
+                    <span class="result-value" id="custoUtilidades">R$ 0,00</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Contador (mensal):</span>
+                    <span class="result-value" id="custoContadorMensal">R$ 0,00</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label"><strong>Total Mensal:</strong></span>
+                    <span class="result-value"><strong id="totalMensal">R$ 0,00</strong></span>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="showTab('funcionarios')">← Voltar</button>
+                <button class="btn btn-primary" onclick="calcularResultados()">Calcular Resultado →</button>
+            </div>
         </div>
 
-        <div class="btn-group">
-          <button class="btn btn-primary" onclick="showTab('cnae')">
-            Próximo: CNAEs →
-          </button>
-        </div>
-      </div>
+        <!-- Tab 5: Resultado -->
+        <div id="resultado" class="tab-content">
+            <h2>Análise Completa do Investimento</h2>
+            
+            <div id="analiseViabilidade"></div>
+            
+            <div class="result-total">
+                <h3>💵 Investimento Total Necessário</h3>
+                <div class="value" id="investimentoTotal">R$ 0,00</div>
+                <p id="statusCapital"></p>
+            </div>
 
-      <!-- Tab 2: CNAEs -->
-      <div id="cnae" class="tab-content">
-        <h2>Classificação Nacional de Atividades Econômicas</h2>
+            <div class="chart-container">
+                <canvas id="chartCustos"></canvas>
+            </div>
 
-        <div class="alert alert-info">
-          <strong>ℹ️ Importante:</strong> O CNAE define as atividades que sua
-          empresa pode exercer.
-        </div>
+            <div class="chart-container">
+                <canvas id="chartProjecao"></canvas>
+            </div>
 
-        <div class="form-group">
-          <label for="buscaCnaePrincipal">CNAE Principal *</label>
-          <div class="cnae-search-container">
-            <input
-              type="text"
-              id="buscaCnaePrincipal"
-              class="form-control"
-              placeholder="Digite palavras-chave (ex: restaurante, consultoria, loja)"
-              onkeyup="buscarCNAE('principal')"
-            />
-            <div id="sugestoesPrincipal" class="cnae-suggestions"></div>
-          </div>
-          <div id="cnaePrincipalSelecionado"></div>
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="showTab('custos')">← Voltar</button>
+                <button class="btn btn-primary" onclick="showTab('relatorio')">Gerar Relatório →</button>
+            </div>
         </div>
 
-        <h3>CNAEs Secundários (opcional)</h3>
-        <button class="btn btn-secondary" onclick="adicionarCNAESecundario()">
-          + Adicionar CNAE Secundário
-        </button>
-        <div id="cnaesSecundarios"></div>
+        <!-- Tab 6: Relatório -->
+        <div id="relatorio" class="tab-content">
+            <h2>Relatório Final e Envio por Email</h2>
+            
+            <div class="form-group">
+                <label for="emailRelatorio">Email para envio do relatório:</label>
+                <input type="email" id="emailRelatorio" class="form-control" placeholder="Digite seu email">
+            </div>
+            
+            <button class="btn btn-success" onclick="enviarRelatorio()">📧 Enviar Relatório por Email</button>
+            
+            <div id="statusEnvio"></div>
+            
+            <div class="result-card" style="margin-top: 20px;">
+                <h3>📋 Resumo do Planejamento</h3>
+                <div id="resumoCompleto"></div>
+            </div>
 
-        <div class="btn-group">
-          <button class="btn btn-secondary" onclick="showTab('empresa')">
-            ← Voltar
-          </button>
-          <button class="btn btn-primary" onclick="showTab('funcionarios')">
-            Próximo: Funcionários →
-          </button>
+            <button class="btn btn-primary" onclick="window.print()">🖨️ Imprimir Relatório</button>
         </div>
-      </div>
-
-      <!-- Tab 3: Funcionários -->
-      <div id="funcionarios" class="tab-content">
-        <h2>Quadro de Funcionários</h2>
-
-        <div class="alert alert-info">
-          O sistema calcula automaticamente todos os encargos trabalhistas.
-        </div>
-
-        <div class="form-group">
-          <label for="qtdFuncionarios"
-            >Quantos funcionários você pretende contratar?</label
-          >
-          <input
-            type="number"
-            id="qtdFuncionarios"
-            class="form-control"
-            value="0"
-            min="0"
-            onchange="gerarCamposFuncionarios()"
-          />
-        </div>
-
-        <div id="listaFuncionarios"></div>
-
-        <div class="btn-group">
-          <button class="btn btn-secondary" onclick="showTab('cnae')">
-            ← Voltar
-          </button>
-          <button class="btn btn-primary" onclick="showTab('custos')">
-            Próximo: Custos →
-          </button>
-        </div>
-      </div>
-
-      <!-- Tab 4: Custos -->
-      <div id="custos" class="tab-content">
-        <h2>Custos de Abertura e Operacionais</h2>
-
-        <div class="result-card">
-          <h3>📄 Custos de Abertura</h3>
-          <div class="result-item">
-            <span class="result-label">Registro na Junta Comercial:</span>
-            <span class="result-value" id="custoJunta">R$ 0,00</span>
-          </div>
-          <div class="result-item">
-            <span class="result-label">Alvará de Funcionamento:</span>
-            <span class="result-value" id="custoAlvara">R$ 0,00</span>
-          </div>
-          <div class="result-item">
-            <span class="result-label">Certificado Digital:</span>
-            <span class="result-value" id="custoCertificado">R$ 0,00</span>
-          </div>
-          <div class="result-item">
-            <span class="result-label">Honorários Contador (abertura):</span>
-            <span class="result-value" id="custoContador">R$ 0,00</span>
-          </div>
-          <div class="result-item">
-            <span class="result-label"><strong>Total Abertura:</strong></span>
-            <span class="result-value"
-              ><strong id="totalAbertura">R$ 0,00</strong></span
-            >
-          </div>
-        </div>
-
-        <div class="result-card">
-          <h3>💼 Custos Operacionais Mensais</h3>
-          <div class="result-item">
-            <span class="result-label">Folha de Pagamento:</span>
-            <span class="result-value" id="custoFolha">R$ 0,00</span>
-          </div>
-          <div class="result-item">
-            <span class="result-label">Aluguel:</span>
-            <span class="result-value" id="custoAluguel">R$ 0,00</span>
-          </div>
-          <div class="result-item">
-            <span class="result-label">Energia/Água/Internet:</span>
-            <span class="result-value" id="custoUtilidades">R$ 0,00</span>
-          </div>
-          <div class="result-item">
-            <span class="result-label">Contador (mensal):</span>
-            <span class="result-value" id="custoContadorMensal">R$ 0,00</span>
-          </div>
-          <div class="result-item">
-            <span class="result-label"><strong>Total Mensal:</strong></span>
-            <span class="result-value"
-              ><strong id="totalMensal">R$ 0,00</strong></span
-            >
-          </div>
-        </div>
-
-        <div class="btn-group">
-          <button class="btn btn-secondary" onclick="showTab('funcionarios')">
-            ← Voltar
-          </button>
-          <button class="btn btn-primary" onclick="calcularResultados()">
-            Calcular Resultado →
-          </button>
-        </div>
-      </div>
-
-      <!-- Tab 5: Resultado -->
-      <div id="resultado" class="tab-content">
-        <h2>Análise Completa do Investimento</h2>
-
-        <div id="analiseViabilidade"></div>
-
-        <div class="result-total">
-          <h3>💵 Investimento Total Necessário</h3>
-          <div class="value" id="investimentoTotal">R$ 0,00</div>
-          <p id="statusCapital"></p>
-        </div>
-
-        <div class="chart-container">
-          <canvas id="chartCustos"></canvas>
-        </div>
-
-        <div class="chart-container">
-          <canvas id="chartProjecao"></canvas>
-        </div>
-
-        <div class="btn-group">
-          <button class="btn btn-secondary" onclick="showTab('custos')">
-            ← Voltar
-          </button>
-          <button class="btn btn-primary" onclick="showTab('relatorio')">
-            Gerar Relatório →
-          </button>
-        </div>
-      </div>
-
-      <!-- Tab 6: Relatório -->
-      <div id="relatorio" class="tab-content">
-        <h2>Relatório Final e Envio por Email</h2>
-
-        <div class="form-group">
-          <label for="emailRelatorio">Email para envio do relatório:</label>
-          <input
-            type="email"
-            id="emailRelatorio"
-            class="form-control"
-            placeholder="Digite seu email"
-          />
-        </div>
-
-        <button class="btn btn-success" onclick="enviarRelatorio()">
-          📧 Enviar Relatório por Email
-        </button>
-
-        <div id="statusEnvio"></div>
-
-        <div class="result-card" style="margin-top: 20px">
-          <h3>📋 Resumo do Planejamento</h3>
-          <div id="resumoCompleto"></div>
-        </div>
-
-        <button class="btn btn-primary" onclick="window.print()">
-          🖨️ Imprimir Relatório
-        </button>
-      </div>
     </div>
 
     <script>
-      // Inicialização do EmailJS
-      emailjs.init('YOUR_PUBLIC_KEY'); // Substitua com sua chave pública do EmailJS
+        // Inicialização do EmailJS
+        emailjs.init("EnkBeiIKu-X8maD-Y"); // Substitua com sua chave pública do EmailJS
 
-      // Estado da aplicação
-      let estado = {
-        empresa: {},
-        cnaePrincipal: null,
-        cnaesSecundarios: [],
-        funcionarios: [],
-        custos: {},
-        graficos: {},
-      };
+        // Estado da aplicação
+        let estado = {
+            empresa: {},
+            cnaePrincipal: null,
+            cnaesSecundarios: [],
+            funcionarios: [],
+            custos: {},
+            graficos: {}
+        };
 
-      // Base de CNAEs (versão reduzida - adicione mais conforme necessário)
-      const cnaes = [
-        // ALIMENTAÇÃO
-        {
-          codigo: '56.11-2/01',
-          descricao: 'Restaurantes e similares',
-          palavras: 'restaurante comida almoço jantar refeição',
-        },
-        {
-          codigo: '56.11-2/03',
-          descricao: 'Lanchonetes, casas de chá, de sucos',
-          palavras: 'lanchonete lanche café suco chá',
-        },
-        {
-          codigo: '56.11-2/05',
-          descricao: 'Bares e outros estabelecimentos',
-          palavras: 'bar bebida cerveja boteco pub',
-        },
-        {
-          codigo: '56.20-1/01',
-          descricao: 'Fornecimento de alimentos preparados',
-          palavras: 'marmita quentinha catering buffet',
-        },
-        {
-          codigo: '56.20-1/02',
-          descricao: 'Serviços de alimentação para eventos',
-          palavras: 'buffet festa evento catering',
-        },
-        {
-          codigo: '10.91-1/02',
-          descricao: 'Fabricação de produtos de padaria',
-          palavras: 'padaria pão bolo confeitaria',
-        },
-        {
-          codigo: '10.92-9/00',
-          descricao: 'Fabricação de biscoitos e bolachas',
-          palavras: 'biscoito bolacha fabricação',
-        },
-        {
-          codigo: '47.21-1/02',
-          descricao: 'Padaria e confeitaria com revenda',
-          palavras: 'padaria confeitaria pão doce',
-        },
-        {
-          codigo: '47.22-9/01',
-          descricao: 'Comércio varejista de carnes - açougues',
-          palavras: 'açougue carne bovina suína frango',
-        },
-        {
-          codigo: '47.24-5/00',
-          descricao: 'Comércio varejista de hortifrutigranjeiros',
-          palavras: 'hortifruti verdura fruta legume',
-        },
+        // Base de CNAEs (versão reduzida - adicione mais conforme necessário)
+        const cnaes = [
+            // ALIMENTAÇÃO
+            {codigo: "56.11-2/01", descricao: "Restaurantes e similares", palavras: "restaurante comida almoço jantar refeição"},
+            {codigo: "56.11-2/03", descricao: "Lanchonetes, casas de chá, de sucos", palavras: "lanchonete lanche café suco chá"},
+            {codigo: "56.11-2/05", descricao: "Bares e outros estabelecimentos", palavras: "bar bebida cerveja boteco pub"},
+            {codigo: "56.20-1/01", descricao: "Fornecimento de alimentos preparados", palavras: "marmita quentinha catering buffet"},
+            {codigo: "56.20-1/02", descricao: "Serviços de alimentação para eventos", palavras: "buffet festa evento catering"},
+            {codigo: "10.91-1/02", descricao: "Fabricação de produtos de padaria", palavras: "padaria pão bolo confeitaria"},
+            {codigo: "10.92-9/00", descricao: "Fabricação de biscoitos e bolachas", palavras: "biscoito bolacha fabricação"},
+            {codigo: "47.21-1/02", descricao: "Padaria e confeitaria com revenda", palavras: "padaria confeitaria pão doce"},
+            {codigo: "47.22-9/01", descricao: "Comércio varejista de carnes - açougues", palavras: "açougue carne bovina suína frango"},
+            {codigo: "47.24-5/00", descricao: "Comércio varejista de hortifrutigranjeiros", palavras: "hortifruti verdura fruta legume"},
+            
+            // COMÉRCIO VAREJISTA
+            {codigo: "47.11-3/02", descricao: "Comércio varejista - supermercados", palavras: "supermercado mercado minimercado"},
+            {codigo: "47.12-1/00", descricao: "Comércio varejista - minimercados", palavras: "mercadinho mercearia conveniência"},
+            {codigo: "47.13-0/02", descricao: "Lojas de variedades", palavras: "loja variedade utilidade bazar"},
+            {codigo: "47.81-4/00", descricao: "Comércio varejista de vestuário", palavras: "roupa vestuário moda loja boutique"},
+            {codigo: "47.82-2/01", descricao: "Comércio varejista de calçados", palavras: "sapato calçado tênis sandália loja"},
+            {codigo: "47.83-1/01", descricao: "Comércio varejista de joias", palavras: "joia joalheria ouro prata bijuteria"},
+            {codigo: "47.51-2/01", descricao: "Comércio de equipamentos de informática", palavras: "computador notebook informática eletrônico"},
+            {codigo: "47.53-9/00", descricao: "Comércio de eletrodomésticos", palavras: "eletrodoméstico geladeira fogão tv"},
+            {codigo: "47.54-7/01", descricao: "Comércio varejista de móveis", palavras: "móvel mobília sofá cama mesa"},
+            {codigo: "47.55-5/01", descricao: "Comércio varejista de tecidos", palavras: "tecido pano loja armarinho"},
+            {codigo: "47.61-0/01", descricao: "Comércio varejista de livros", palavras: "livro livraria revista jornal"},
+            {codigo: "47.61-0/03", descricao: "Comércio varejista de papelaria", palavras: "papelaria material escolar escritório"},
+            {codigo: "47.71-7/01", descricao: "Farmácia sem manipulação", palavras: "farmácia drogaria remédio medicamento"},
+            {codigo: "47.72-5/00", descricao: "Comércio de cosméticos e perfumaria", palavras: "cosmético perfume maquiagem beleza"},
+            {codigo: "47.89-0/02", descricao: "Comércio de plantas e flores", palavras: "floricultura planta flor jardim vaso"},
+            {codigo: "47.89-0/04", descricao: "Comércio de animais vivos", palavras: "pet shop animal cachorro gato pássaro"},
+            
+            // PRESTAÇÃO DE SERVIÇOS
+            {codigo: "96.02-5/01", descricao: "Cabeleireiros e manicure", palavras: "salão beleza cabeleireiro manicure pedicure"},
+            {codigo: "96.02-5/02", descricao: "Atividades de estética", palavras: "estética spa clínica beleza tratamento"},
+            {codigo: "96.03-3/02", descricao: "Serviços de cremação", palavras: "funerária cremação funeral"},
+            {codigo: "96.09-2/02", descricao: "Agências matrimoniais", palavras: "agência matrimonial casamento encontro"},
+            {codigo: "96.09-2/08", descricao: "Higiene e embelezamento de animais", palavras: "pet banho tosa veterinário animal"},
+            {codigo: "95.11-8/00", descricao: "Reparação de computadores", palavras: "assistência técnica computador notebook conserto"},
+            {codigo: "95.12-6/00", descricao: "Reparação de equipamentos", palavras: "conserto manutenção eletrônico celular"},
+            {codigo: "95.21-5/00", descricao: "Reparação de eletrônicos", palavras: "assistência tv som eletrônico conserto"},
+            {codigo: "95.29-1/99", descricao: "Reparação de outros objetos", palavras: "conserto manutenção reparação diversos"},
+            {codigo: "82.11-3/00", descricao: "Serviços de escritório", palavras: "escritório administrativo secretaria apoio"},
+            {codigo: "82.19-9/99", descricao: "Preparação de documentos", palavras: "documento fotocópia digitalização serviço"},
+            {codigo: "82.99-7/99", descricao: "Outras atividades de serviços", palavras: "serviço prestação diversos apoio"},
+            
+            // TECNOLOGIA E INFORMÁTICA
+            {codigo: "62.01-5/01", descricao: "Desenvolvimento de software", palavras: "software desenvolvimento programação sistema"},
+            {codigo: "62.01-5/02", descricao: "Web design", palavras: "site web design internet criação desenvolvimento"},
+            {codigo: "62.02-3/00", descricao: "Software customizável", palavras: "software sistema customização personalização"},
+            {codigo: "62.03-1/00", descricao: "Software não customizável", palavras: "software programa aplicativo app"},
+            {codigo: "62.04-0/00", descricao: "Consultoria em TI", palavras: "consultoria tecnologia informática ti sistema"},
+            {codigo: "62.09-1/00", descricao: "Suporte técnico", palavras: "suporte técnico ti manutenção sistema"},
+            {codigo: "63.11-9/00", descricao: "Tratamento de dados", palavras: "dados processamento datacenter servidor"},
+            {codigo: "63.19-4/00", descricao: "Portais e conteúdo na internet", palavras: "portal site conteúdo internet blog"},
+            
+            // EDUCAÇÃO E TREINAMENTO
+            {codigo: "85.11-2/00", descricao: "Educação infantil - creche", palavras: "creche infantil bebê criança educação"},
+            {codigo: "85.12-1/00", descricao: "Educação infantil - pré-escola", palavras: "pré-escola infantil criança educação jardim"},
+            {codigo: "85.13-9/00", descricao: "Ensino fundamental", palavras: "escola fundamental educação ensino primário"},
+            {codigo: "85.20-1/00", descricao: "Ensino médio", palavras: "ensino médio colégio escola secundário"},
+            {codigo: "85.31-7/00", descricao: "Educação superior - graduação", palavras: "faculdade universidade graduação ensino superior"},
+            {codigo: "85.32-5/00", descricao: "Educação superior - pós-graduação", palavras: "pós-graduação mestrado doutorado especialização"},
+            {codigo: "85.41-4/00", descricao: "Educação profissional técnica", palavras: "curso técnico profissionalizante ensino"},
+            {codigo: "85.50-3/01", descricao: "Administração de caixas escolares", palavras: "caixa escolar administração educação"},
+            {codigo: "85.50-3/02", descricao: "Atividades de apoio à educação", palavras: "apoio educação escolar suporte"},
+            {codigo: "85.91-1/00", descricao: "Ensino de esportes", palavras: "esporte academia natação futebol aula"},
+            {codigo: "85.92-9/01", descricao: "Ensino de dança", palavras: "dança ballet aula escola academia"},
+            {codigo: "85.92-9/02", descricao: "Ensino de artes cênicas", palavras: "teatro arte cênica aula curso"},
+            {codigo: "85.92-9/03", descricao: "Ensino de música", palavras: "música aula instrumento conservatório"},
+            {codigo: "85.93-7/00", descricao: "Ensino de idiomas", palavras: "idioma língua inglês curso escola"},
+            {codigo: "85.99-6/01", descricao: "Formação de condutores", palavras: "auto escola direção habilitação cnh"},
+            {codigo: "85.99-6/03", descricao: "Treinamento em informática", palavras: "informática computador curso treinamento"},
+            {codigo: "85.99-6/04", descricao: "Treinamento em desenvolvimento", palavras: "treinamento desenvolvimento profissional curso"},
+            {codigo: "85.99-6/99", descricao: "Outras atividades de ensino", palavras: "ensino curso aula treinamento educação"},
+            
+            // SAÚDE E BEM-ESTAR
+            {codigo: "86.10-1/01", descricao: "Hospitais", palavras: "hospital clínica internação médico"},
+            {codigo: "86.10-1/02", descricao: "Unidades de pronto-socorro", palavras: "pronto socorro emergência urgência hospital"},
+            {codigo: "86.21-6/01", descricao: "Centros de medicina nuclear", palavras: "medicina nuclear exame diagnóstico"},
+            {codigo: "86.21-6/02", descricao: "Serviços de tomografia", palavras: "tomografia exame diagnóstico imagem"},
+            {codigo: "86.22-4/00", descricao: "Clínicas e consultórios médicos", palavras: "clínica médico consultório doutor"},
+            {codigo: "86.30-5/01", descricao: "Consultório médico", palavras: "médico consultório clínica atendimento"},
+            {codigo: "86.30-5/02", descricao: "Consultório odontológico", palavras: "dentista odontologia dente consultório"},
+            {codigo: "86.30-5/03", descricao: "Clínica médica", palavras: "clínica médica saúde atendimento"},
+            {codigo: "86.30-5/04", descricao: "Clínica odontológica", palavras: "clínica dentária odontologia dente"},
+            {codigo: "86.30-5/06", descricao: "Serviços de vacinação", palavras: "vacinação vacina imunização clínica"},
+            {codigo: "86.30-5/07", descricao: "Atividades de reprodução assistida", palavras: "reprodução fertilização inseminação clínica"},
+            {codigo: "86.40-2/01", descricao: "Laboratórios de análises clínicas", palavras: "laboratório exame análise clínica sangue"},
+            {codigo: "86.40-2/02", descricao: "Laboratórios de anatomia patológica", palavras: "anatomia patologia laboratório biópsia"},
+            {codigo: "86.50-0/01", descricao: "Atividades de enfermagem", palavras: "enfermagem enfermeiro cuidado saúde"},
+            {codigo: "86.50-0/02", descricao: "Atividades de fisioterapia", palavras: "fisioterapia fisioterapeuta reabilitação"},
+            {codigo: "86.50-0/03", descricao: "Atividades de nutrição", palavras: "nutrição nutricionista dieta alimentação"},
+            {codigo: "86.50-0/04", descricao: "Atividades de psicologia", palavras: "psicologia psicólogo terapia mental"},
+            {codigo: "86.50-0/05", descricao: "Atividades de terapia ocupacional", palavras: "terapia ocupacional terapeuta reabilitação"},
+            {codigo: "86.50-0/06", descricao: "Atividades de fonoaudiologia", palavras: "fonoaudiologia fala audição voz"},
+            {codigo: "86.50-0/99", descricao: "Outras atividades de saúde", palavras: "saúde profissional atendimento clínica"},
+            {codigo: "86.90-9/01", descricao: "Práticas integrativas", palavras: "acupuntura homeopatia alternativa integrativa"},
+            {codigo: "86.90-9/02", descricao: "Atividades de banco de sangue", palavras: "banco sangue doação hemocentro"},
+            {codigo: "86.90-9/03", descricao: "Serviços de acupuntura", palavras: "acupuntura medicina chinesa terapia"},
+            {codigo: "86.90-9/04", descricao: "Atividades de podologia", palavras: "podologia pé cuidado saúde"},
+            {codigo: "86.90-9/99", descricao: "Outras atividades de saúde", palavras: "saúde terapia tratamento cuidado"},
+            {codigo: "75.00-1/00", descricao: "Atividades veterinárias", palavras: "veterinário animal pet clínica"},
+            
+            // CONSTRUÇÃO CIVIL
+            {codigo: "41.10-7/00", descricao: "Incorporação imobiliária", palavras: "incorporação imobiliária construção empreendimento"},
+            {codigo: "41.20-4/00", descricao: "Construção de edifícios", palavras: "construção prédio edifício obra civil"},
+            {codigo: "42.11-1/01", descricao: "Construção de rodovias", palavras: "rodovia estrada asfalto pavimentação"},
+            {codigo: "42.13-8/00", descricao: "Obras de urbanização", palavras: "urbanização praça calçada pavimento"},
+            {codigo: "43.11-8/01", descricao: "Demolição de edifícios", palavras: "demolição edifício prédio derrubada"},
+            {codigo: "43.12-6/00", descricao: "Perfurações e sondagens", palavras: "perfuração sondagem solo poço"},
+            {codigo: "43.13-4/00", descricao: "Obras de terraplenagem", palavras: "terraplanagem escavação aterro movimentação"},
+            {codigo: "43.21-5/00", descricao: "Instalação elétrica", palavras: "elétrica instalação eletricista fiação"},
+            {codigo: "43.22-3/01", descricao: "Instalações hidráulicas", palavras: "hidráulica encanamento encanador água"},
+            {codigo: "43.22-3/02", descricao: "Instalação de ar condicionado", palavras: "ar condicionado instalação manutenção"},
+            {codigo: "43.30-4/01", descricao: "Impermeabilização", palavras: "impermeabilização vedação infiltração"},
+            {codigo: "43.30-4/02", descricao: "Instalação de portas e janelas", palavras: "porta janela esquadria instalação"},
+            {codigo: "43.30-4/03", descricao: "Obras de acabamento em gesso", palavras: "gesso drywall forro moldura"},
+            {codigo: "43.30-4/04", descricao: "Serviços de pintura", palavras: "pintura pintor parede acabamento"},
+            {codigo: "43.30-4/05", descricao: "Aplicação de revestimentos", palavras: "revestimento azulejo piso cerâmica"},
+            {codigo: "43.99-1/03", descricao: "Obras de alvenaria", palavras: "alvenaria pedreiro tijolo construção"},
+            
+            // TRANSPORTE E LOGÍSTICA
+            {codigo: "49.23-0/01", descricao: "Serviço de táxi", palavras: "táxi transporte passageiro motorista"},
+            {codigo: "49.23-0/02", descricao: "Transporte por aplicativo", palavras: "uber 99 aplicativo motorista transporte"},
+            {codigo: "49.24-8/00", descricao: "Transporte escolar", palavras: "transporte escolar van ônibus escola"},
+            {codigo: "49.30-2/01", descricao: "Transporte de carga municipal", palavras: "frete caminhão carga mudança transporte"},
+            {codigo: "49.30-2/02", descricao: "Transporte de carga intermunicipal", palavras: "frete caminhão carga transporte intermunicipal"},
+            {codigo: "49.30-2/03", descricao: "Transporte de carga interestadual", palavras: "frete caminhão carga transporte interestadual"},
+            {codigo: "52.11-7/01", descricao: "Armazéns gerais", palavras: "armazém estoque guarda mercadoria"},
+            {codigo: "52.11-7/99", descricao: "Depósitos de mercadorias", palavras: "depósito estoque armazenamento guarda"},
+            {codigo: "52.12-5/00", descricao: "Carga e descarga", palavras: "carga descarga movimentação mercadoria"},
+            {codigo: "52.23-1/00", descricao: "Estacionamento de veículos", palavras: "estacionamento garagem vaga carro"},
+            {codigo: "52.29-0/01", descricao: "Serviços de apoio ao transporte", palavras: "logística transporte apoio despachante"},
+            {codigo: "52.29-0/02", descricao: "Serviços de reboque", palavras: "reboque guincho socorro veículo"},
+            {codigo: "53.10-5/01", descricao: "Correios nacional", palavras: "correio carta encomenda entrega"},
+            {codigo: "53.10-5/02", descricao: "Correios franqueado", palavras: "correio agência franquia postal"},
+            {codigo: "53.20-2/01", descricao: "Entrega rápida", palavras: "motoboy entrega delivery rápida"},
+            {codigo: "53.20-2/02", descricao: "Serviços de entrega", palavras: "entrega encomenda delivery transporte"},
+            
+            // CONSULTORIA E ASSESSORIA
+            {codigo: "69.20-6/01", descricao: "Atividades de contabilidade", palavras: "contador contabilidade escritório fiscal"},
+            {codigo: "69.20-6/02", descricao: "Atividades de consultoria", palavras: "consultoria tributária fiscal contábil"},
+            {codigo: "70.20-4/00", descricao: "Consultoria em gestão empresarial", palavras: "consultoria gestão empresa administração negócio"},
+            {codigo: "71.11-1/00", descricao: "Serviços de arquitetura", palavras: "arquiteto arquitetura projeto construção"},
+            {codigo: "71.12-0/00", descricao: "Serviços de engenharia", palavras: "engenheiro engenharia projeto técnico"},
+            {codigo: "71.19-7/01", descricao: "Serviços de cartografia", palavras: "cartografia mapa topografia geodésia"},
+            {codigo: "71.19-7/03", descricao: "Serviços de perícia técnica", palavras: "perícia técnica laudo avaliação"},
+            {codigo: "71.20-1/00", descricao: "Testes e análises técnicas", palavras: "teste análise laboratório técnico"},
+            {codigo: "72.10-0/00", descricao: "Pesquisa e desenvolvimento", palavras: "pesquisa desenvolvimento p&d ciência"},
+            {codigo: "73.11-4/00", descricao: "Agências de publicidade", palavras: "publicidade propaganda marketing agência"},
+            {codigo: "73.12-2/00", descricao: "Agenciamento de espaços", palavras: "agenciamento mídia espaço publicidade"},
+            {codigo: "73.19-0/01", descricao: "Criação de estandes", palavras: "estande feira evento montagem"},
+            {codigo: "73.19-0/02", descricao: "Promoção de vendas", palavras: "promoção venda marketing merchandising"},
+            {codigo: "73.19-0/03", descricao: "Marketing direto", palavras: "marketing direto mala direta telemarketing"},
+            {codigo: "73.19-0/04", descricao: "Consultoria em publicidade", palavras: "consultoria publicidade marketing comunicação"},
+            {codigo: "73.20-3/00", descricao: "Pesquisas de mercado", palavras: "pesquisa mercado opinião estatística"},
+            {codigo: "74.10-2/02", descricao: "Design de interiores", palavras: "design interior decoração ambiente projeto"},
+            {codigo: "74.10-2/03", descricao: "Design de produto", palavras: "design produto industrial criação"},
+            {codigo: "74.10-2/99", descricao: "Atividades de design", palavras: "design gráfico visual criação arte"},
+            {codigo: "74.20-0/01", descricao: "Atividades de fotografia", palavras: "fotografia fotógrafo foto estúdio"},
+            {codigo: "74.20-0/04", descricao: "Filmagem de eventos", palavras: "filmagem vídeo evento festa casamento"},
+            {codigo: "74.90-1/01", descricao: "Serviços de tradução", palavras: "tradução intérprete idioma língua"},
+            {codigo: "74.90-1/04", descricao: "Atividades de intermediação", palavras: "intermediação negócio agenciamento broker"},
+            {codigo: "74.90-1/05", descricao: "Agenciamento de profissionais", palavras: "agenciamento profissional artista modelo"},
+            {codigo: "74.90-1/99", descricao: "Outras atividades profissionais", palavras: "consultoria assessoria profissional serviço"},
+            
+            // IMOBILIÁRIO
+            {codigo: "68.10-2/01", descricao: "Compra e venda de imóveis", palavras: "imobiliária imóvel casa apartamento venda"},
+            {codigo: "68.10-2/02", descricao: "Aluguel de imóveis próprios", palavras: "aluguel imóvel locação proprietário"},
+            {codigo: "68.21-8/01", descricao: "Corretagem de imóveis", palavras: "corretor imóvel imobiliária venda aluguel"},
+            {codigo: "68.21-8/02", descricao: "Corretagem de contratos", palavras: "corretagem contrato compra venda imóvel"},
+            {codigo: "68.22-6/00", descricao: "Gestão e administração", palavras: "administração condomínio imóvel gestão"},
+            
+            // INDÚSTRIA E MANUFATURA
+            {codigo: "14.12-6/01", descricao: "Confecção de peças do vestuário", palavras: "confecção roupa vestuário costura fábrica"},
+            {codigo: "14.12-6/02", descricao: "Confecção sob medida", palavras: "alfaiate costureira sob medida roupa"},
+            {codigo: "14.12-6/03", descricao: "Facção de peças do vestuário", palavras: "facção costura terceirizada roupa"},
+            {codigo: "15.31-9/01", descricao: "Fabricação de calçados", palavras: "calçado sapato tênis fábrica produção"},
+            {codigo: "16.22-6/02", descricao: "Fabricação de esquadrias", palavras: "porta janela madeira alumínio esquadria"},
+            {codigo: "31.01-2/00", descricao: "Fabricação de móveis", palavras: "móvel marcenaria fábrica mobília"},
+            {codigo: "31.02-1/00", descricao: "Fabricação de móveis de metal", palavras: "móvel metal ferro aço fábrica"},
+            {codigo: "32.11-6/01", descricao: "Lapidação de gemas", palavras: "pedra preciosa lapidação joia gema"},
+            {codigo: "32.11-6/02", descricao: "Fabricação de artefatos", palavras: "joalheria ourives joia ouro prata"},
+            {codigo: "32.12-4/00", descricao: "Fabricação de bijuterias", palavras: "bijuteria acessório moda fabricação"},
+            {codigo: "32.99-0/01", descricao: "Fabricação de guarda-chuvas", palavras: "guarda-chuva sombrinha fabricação"},
+            {codigo: "32.99-0/03", descricao: "Fabricação de letras e placas", palavras: "placa letreiro luminoso sinalização"},
+            {codigo: "32.99-0/04", descricao: "Fabricação de painéis", palavras: "painel outdoor placa publicidade"},
+            {codigo: "32.99-0/05", descricao: "Fabricação de aviamentos", palavras: "aviamento zíper botão armarinho"},
+            
+            // OUTROS SERVIÇOS
+            {codigo: "77.11-0/00", descricao: "Locação de automóveis", palavras: "aluguel carro automóvel locadora veículo"},
+            {codigo: "77.19-5/01", descricao: "Locação de embarcações", palavras: "aluguel barco lancha jet ski náutica"},
+            {codigo: "77.21-7/00", descricao: "Aluguel de equipamentos", palavras: "aluguel equipamento esporte lazer"},
+            {codigo: "77.22-5/00", descricao: "Aluguel de DVDs", palavras: "locadora dvd filme vídeo aluguel"},
+            {codigo: "77.23-3/00", descricao: "Aluguel de objetos pessoais", palavras: "aluguel objeto roupa fantasia utensílio"},
+            {codigo: "77.29-2/01", descricao: "Aluguel de aparelhos de jogos", palavras: "aluguel videogame jogo eletrônico"},
+            {codigo: "77.29-2/02", descricao: "Aluguel de móveis", palavras: "aluguel móvel mobília evento festa"},
+            {codigo: "77.29-2/03", descricao: "Aluguel de material médico", palavras: "aluguel equipamento médico hospitalar"},
+            {codigo: "77.31-4/00", descricao: "Aluguel de máquinas agrícolas", palavras: "aluguel máquina trator agrícola equipamento"},
+            {codigo: "77.32-2/01", descricao: "Aluguel de máquinas para construção", palavras: "aluguel máquina construção betoneira andaime"},
+            {codigo: "77.32-2/02", descricao: "Aluguel de andaimes", palavras: "andaime aluguel locação construção"},
+            {codigo: "77.33-1/00", descricao: "Aluguel de máquinas de escritório", palavras: "aluguel copiadora impressora escritório"},
+            {codigo: "77.39-0/01", descricao: "Aluguel de palcos", palavras: "aluguel palco som iluminação evento"},
+            {codigo: "77.39-0/02", descricao: "Aluguel de equipamentos científicos", palavras: "aluguel equipamento científico médico laboratório"},
+            {codigo: "77.39-0/03", descricao: "Aluguel de objetos de decoração", palavras: "aluguel decoração festa evento ornamento"},
+            {codigo: "77.39-0/99", descricao: "Aluguel de outras máquinas", palavras: "aluguel máquina equipamento locação"},
+            {codigo: "78.10-8/00", descricao: "Seleção de pessoal", palavras: "recrutamento seleção rh recursos humanos"},
+            {codigo: "78.20-5/00", descricao: "Locação de mão-de-obra", palavras: "terceirização mão obra temporário"},
+            {codigo: "78.30-2/00", descricao: "Fornecimento de recursos humanos", palavras: "recursos humanos rh terceirização pessoal"},
+            {codigo: "79.11-2/00", descricao: "Agências de viagens", palavras: "agência viagem turismo pacote passagem"},
+            {codigo: "79.12-1/00", descricao: "Operadores turísticos", palavras: "operadora turismo viagem excursão pacote"},
+            {codigo: "79.90-2/00", descricao: "Serviços de turismo", palavras: "guia turístico turismo receptivo transfer"},
+            {codigo: "80.11-1/01", descricao: "Atividades de vigilância", palavras: "vigilância segurança vigia guarda"},
+            {codigo: "80.11-1/02", descricao: "Serviços de adestramento", palavras: "adestramento cão guarda segurança treinamento"},
+            {codigo: "80.12-9/00", descricao: "Atividades de transporte de valores", palavras: "transporte valores carro forte segurança"},
+            {codigo: "80.20-0/01", descricao: "Atividades de monitoramento", palavras: "monitoramento alarme câmera segurança"},
+            {codigo: "80.20-0/02", descricao: "Outras atividades de segurança", palavras: "segurança eletrônica sistema alarme"},
+            {codigo: "80.30-7/00", descricao: "Atividades de investigação", palavras: "detetive investigação particular segurança"},
+            {codigo: "81.11-7/00", descricao: "Serviços combinados de escritório", palavras: "administração prédio condomínio facility"},
+            {codigo: "81.12-5/00", descricao: "Condomínios prediais", palavras: "condomínio prédio administração síndico"},
+            {codigo: "81.21-4/00", descricao: "Limpeza geral de prédios", palavras: "limpeza faxina prédio escritório"},
+            {codigo: "81.22-2/00", descricao: "Limpeza especializada", palavras: "limpeza industrial especializada técnica"},
+            {codigo: "81.29-0/00", descricao: "Atividades de limpeza", palavras: "limpeza higienização sanitização desinfecção"},
+            {codigo: "81.30-3/00", descricao: "Atividades paisagísticas", palavras: "jardinagem paisagismo jardim manutenção"},
+            {codigo: "82.91-1/00", descricao: "Atividades de cobrança", palavras: "cobrança inadimplência recuperação crédito"},
+            {codigo: "82.92-0/00", descricao: "Envasamento e empacotamento", palavras: "embalagem empacotamento envase terceirizado"},
+            {codigo: "82.99-7/01", descricao: "Medição de consumo", palavras: "leitura medidor água luz gás"},
+            {codigo: "82.99-7/03", descricao: "Serviços de gravação", palavras: "gravação áudio voz locução estúdio"},
+            {codigo: "82.99-7/04", descricao: "Leiloeiro independente", palavras: "leilão leiloeiro arrematação venda"},
+            {codigo: "82.99-7/05", descricao: "Serviços de levantamento", palavras: "levantamento dados pesquisa campo"},
+            {codigo: "82.99-7/07", descricao: "Salas de acesso à internet", palavras: "lan house cyber café internet computador"},
+            
+            // ATIVIDADES RECREATIVAS E CULTURAIS
+            {codigo: "90.01-9/01", descricao: "Produção teatral", palavras: "teatro peça espetáculo produção cultural"},
+            {codigo: "90.01-9/02", descricao: "Produção musical", palavras: "música show concerto produção evento"},
+            {codigo: "90.01-9/03", descricao: "Produção de espetáculos", palavras: "dança ballet espetáculo produção"},
+            {codigo: "90.01-9/04", descricao: "Produção de espetáculos circenses", palavras: "circo espetáculo produção entretenimento"},
+            {codigo: "90.01-9/05", descricao: "Produção de espetáculos de rodeio", palavras: "rodeio vaquejada espetáculo evento"},
+            {codigo: "90.01-9/06", descricao: "Atividades de sonorização", palavras: "som iluminação evento festa dj"},
+            {codigo: "90.01-9/99", descricao: "Outras atividades artísticas", palavras: "arte cultura espetáculo produção"},
+            {codigo: "90.02-7/01", descricao: "Atividades de artistas", palavras: "artista ator músico cantor"},
+            {codigo: "90.02-7/02", descricao: "Restauração de obras de arte", palavras: "restauração arte obra pintura"},
+            {codigo: "90.03-5/00", descricao: "Gestão de espaços", palavras: "teatro auditório casa show gestão"},
+            {codigo: "91.01-5/00", descricao: "Atividades de bibliotecas", palavras: "biblioteca arquivo livro acervo"},
+            {codigo: "91.02-3/01", descricao: "Atividades de museus", palavras: "museu exposição galeria arte"},
+            {codigo: "91.02-3/02", descricao: "Restauração de prédios históricos", palavras: "restauração patrimônio histórico prédio"},
+            {codigo: "91.03-1/00", descricao: "Atividades de jardins botânicos", palavras: "jardim botânico zoológico parque animal"},
+            {codigo: "92.00-3/01", descricao: "Casas de bingo", palavras: "bingo jogo sorte entretenimento"},
+            {codigo: "92.00-3/02", descricao: "Exploração de apostas", palavras: "aposta loteria jogo sorte"},
+            {codigo: "92.00-3/99", descricao: "Outras atividades de jogos", palavras: "jogo azar sorte entretenimento"},
+            {codigo: "93.11-5/00", descricao: "Gestão de instalações esportivas", palavras: "ginásio quadra campo esporte"},
+            {codigo: "93.12-3/00", descricao: "Clubes sociais e esportivos", palavras: "clube esporte social recreação"},
+            {codigo: "93.13-1/00", descricao: "Atividades de condicionamento", palavras: "academia fitness ginástica musculação"},
+            {codigo: "93.19-1/01", descricao: "Produção de eventos esportivos", palavras: "evento esporte competição campeonato"},
+            {codigo: "93.19-1/99", descricao: "Outras atividades esportivas", palavras: "esporte atividade física recreação"},
+            {codigo: "93.21-2/00", descricao: "Parques de diversão", palavras: "parque diversão temático entretenimento"},
+            {codigo: "93.29-8/01", descricao: "Discotecas e danceterias", palavras: "boate discoteca balada danceteria"},
+            {codigo: "93.29-8/02", descricao: "Exploração de boliches", palavras: "boliche bowling entretenimento jogo"},
+            {codigo: "93.29-8/03", descricao: "Exploração de jogos eletrônicos", palavras: "fliperama videogame arcade jogo"},
+            {codigo: "93.29-8/04", descricao: "Exploração de jogos", palavras: "sinuca bilhar snooker jogo"},
+            {codigo: "93.29-8/99", descricao: "Outras atividades de recreação", palavras: "lazer recreação entretenimento diversão"},
+            
+            // ORGANIZAÇÕES ASSOCIATIVAS
+            {codigo: "94.11-1/00", descricao: "Atividades de organizações", palavras: "associação empresarial patronal comercial"},
+            {codigo: "94.12-0/00", descricao: "Atividades de organizações profissionais", palavras: "conselho ordem profissional sindicato"},
+            {codigo: "94.20-1/00", descricao: "Atividades de sindicatos", palavras: "sindicato trabalhador categoria profissional"},
+            {codigo: "94.30-8/00", descricao: "Atividades de associações", palavras: "associação defesa direito social"},
+            {codigo: "94.91-0/00", descricao: "Atividades de organizações religiosas", palavras: "igreja templo religião culto"},
+            {codigo: "94.92-8/00", descricao: "Atividades de organizações políticas", palavras: "partido político campanha eleição"},
+            {codigo: "94.93-6/00", descricao: "Atividades de organizações", palavras: "ong organização social assistência"},
+            {codigo: "94.99-5/00", descricao: "Outras atividades associativas", palavras: "associação clube organização social"}
+        ];
 
-        // COMÉRCIO VAREJISTA
-        {
-          codigo: '47.11-3/02',
-          descricao: 'Comércio varejista - supermercados',
-          palavras: 'supermercado mercado minimercado',
-        },
-        {
-          codigo: '47.12-1/00',
-          descricao: 'Comércio varejista - minimercados',
-          palavras: 'mercadinho mercearia conveniência',
-        },
-        {
-          codigo: '47.13-0/02',
-          descricao: 'Lojas de variedades',
-          palavras: 'loja variedade utilidade bazar',
-        },
-        {
-          codigo: '47.81-4/00',
-          descricao: 'Comércio varejista de vestuário',
-          palavras: 'roupa vestuário moda loja boutique',
-        },
-        {
-          codigo: '47.82-2/01',
-          descricao: 'Comércio varejista de calçados',
-          palavras: 'sapato calçado tênis sandália loja',
-        },
-        {
-          codigo: '47.83-1/01',
-          descricao: 'Comércio varejista de joias',
-          palavras: 'joia joalheria ouro prata bijuteria',
-        },
-        {
-          codigo: '47.51-2/01',
-          descricao: 'Comércio de equipamentos de informática',
-          palavras: 'computador notebook informática eletrônico',
-        },
-        {
-          codigo: '47.53-9/00',
-          descricao: 'Comércio de eletrodomésticos',
-          palavras: 'eletrodoméstico geladeira fogão tv',
-        },
-        {
-          codigo: '47.54-7/01',
-          descricao: 'Comércio varejista de móveis',
-          palavras: 'móvel mobília sofá cama mesa',
-        },
-        {
-          codigo: '47.55-5/01',
-          descricao: 'Comércio varejista de tecidos',
-          palavras: 'tecido pano loja armarinho',
-        },
-        {
-          codigo: '47.61-0/01',
-          descricao: 'Comércio varejista de livros',
-          palavras: 'livro livraria revista jornal',
-        },
-        {
-          codigo: '47.61-0/03',
-          descricao: 'Comércio varejista de papelaria',
-          palavras: 'papelaria material escolar escritório',
-        },
-        {
-          codigo: '47.71-7/01',
-          descricao: 'Farmácia sem manipulação',
-          palavras: 'farmácia drogaria remédio medicamento',
-        },
-        {
-          codigo: '47.72-5/00',
-          descricao: 'Comércio de cosméticos e perfumaria',
-          palavras: 'cosmético perfume maquiagem beleza',
-        },
-        {
-          codigo: '47.89-0/02',
-          descricao: 'Comércio de plantas e flores',
-          palavras: 'floricultura planta flor jardim vaso',
-        },
-        {
-          codigo: '47.89-0/04',
-          descricao: 'Comércio de animais vivos',
-          palavras: 'pet shop animal cachorro gato pássaro',
-        },
+        // Contador de CNAEs secundários
+        let contadorCnaesSecundarios = 0;
 
-        // PRESTAÇÃO DE SERVIÇOS
-        {
-          codigo: '96.02-5/01',
-          descricao: 'Cabeleireiros e manicure',
-          palavras: 'salão beleza cabeleireiro manicure pedicure',
-        },
-        {
-          codigo: '96.02-5/02',
-          descricao: 'Atividades de estética',
-          palavras: 'estética spa clínica beleza tratamento',
-        },
-        {
-          codigo: '96.03-3/02',
-          descricao: 'Serviços de cremação',
-          palavras: 'funerária cremação funeral',
-        },
-        {
-          codigo: '96.09-2/02',
-          descricao: 'Agências matrimoniais',
-          palavras: 'agência matrimonial casamento encontro',
-        },
-        {
-          codigo: '96.09-2/08',
-          descricao: 'Higiene e embelezamento de animais',
-          palavras: 'pet banho tosa veterinário animal',
-        },
-        {
-          codigo: '95.11-8/00',
-          descricao: 'Reparação de computadores',
-          palavras: 'assistência técnica computador notebook conserto',
-        },
-        {
-          codigo: '95.12-6/00',
-          descricao: 'Reparação de equipamentos',
-          palavras: 'conserto manutenção eletrônico celular',
-        },
-        {
-          codigo: '95.21-5/00',
-          descricao: 'Reparação de eletrônicos',
-          palavras: 'assistência tv som eletrônico conserto',
-        },
-        {
-          codigo: '95.29-1/99',
-          descricao: 'Reparação de outros objetos',
-          palavras: 'conserto manutenção reparação diversos',
-        },
-        {
-          codigo: '82.11-3/00',
-          descricao: 'Serviços de escritório',
-          palavras: 'escritório administrativo secretaria apoio',
-        },
-        {
-          codigo: '82.19-9/99',
-          descricao: 'Preparação de documentos',
-          palavras: 'documento fotocópia digitalização serviço',
-        },
-        {
-          codigo: '82.99-7/99',
-          descricao: 'Outras atividades de serviços',
-          palavras: 'serviço prestação diversos apoio',
-        },
+        // Função para mostrar aba
+        function showTab(tabId) {
+            // Remove active de todas as abas
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
 
-        // TECNOLOGIA E INFORMÁTICA
-        {
-          codigo: '62.01-5/01',
-          descricao: 'Desenvolvimento de software',
-          palavras: 'software desenvolvimento programação sistema',
-        },
-        {
-          codigo: '62.01-5/02',
-          descricao: 'Web design',
-          palavras: 'site web design internet criação desenvolvimento',
-        },
-        {
-          codigo: '62.02-3/00',
-          descricao: 'Software customizável',
-          palavras: 'software sistema customização personalização',
-        },
-        {
-          codigo: '62.03-1/00',
-          descricao: 'Software não customizável',
-          palavras: 'software programa aplicativo app',
-        },
-        {
-          codigo: '62.04-0/00',
-          descricao: 'Consultoria em TI',
-          palavras: 'consultoria tecnologia informática ti sistema',
-        },
-        {
-          codigo: '62.09-1/00',
-          descricao: 'Suporte técnico',
-          palavras: 'suporte técnico ti manutenção sistema',
-        },
-        {
-          codigo: '63.11-9/00',
-          descricao: 'Tratamento de dados',
-          palavras: 'dados processamento datacenter servidor',
-        },
-        {
-          codigo: '63.19-4/00',
-          descricao: 'Portais e conteúdo na internet',
-          palavras: 'portal site conteúdo internet blog',
-        },
+            // Adiciona active na aba selecionada
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
 
-        // EDUCAÇÃO E TREINAMENTO
-        {
-          codigo: '85.11-2/00',
-          descricao: 'Educação infantil - creche',
-          palavras: 'creche infantil bebê criança educação',
-        },
-        {
-          codigo: '85.12-1/00',
-          descricao: 'Educação infantil - pré-escola',
-          palavras: 'pré-escola infantil criança educação jardim',
-        },
-        {
-          codigo: '85.13-9/00',
-          descricao: 'Ensino fundamental',
-          palavras: 'escola fundamental educação ensino primário',
-        },
-        {
-          codigo: '85.20-1/00',
-          descricao: 'Ensino médio',
-          palavras: 'ensino médio colégio escola secundário',
-        },
-        {
-          codigo: '85.31-7/00',
-          descricao: 'Educação superior - graduação',
-          palavras: 'faculdade universidade graduação ensino superior',
-        },
-        {
-          codigo: '85.32-5/00',
-          descricao: 'Educação superior - pós-graduação',
-          palavras: 'pós-graduação mestrado doutorado especialização',
-        },
-        {
-          codigo: '85.41-4/00',
-          descricao: 'Educação profissional técnica',
-          palavras: 'curso técnico profissionalizante ensino',
-        },
-        {
-          codigo: '85.50-3/01',
-          descricao: 'Administração de caixas escolares',
-          palavras: 'caixa escolar administração educação',
-        },
-        {
-          codigo: '85.50-3/02',
-          descricao: 'Atividades de apoio à educação',
-          palavras: 'apoio educação escolar suporte',
-        },
-        {
-          codigo: '85.91-1/00',
-          descricao: 'Ensino de esportes',
-          palavras: 'esporte academia natação futebol aula',
-        },
-        {
-          codigo: '85.92-9/01',
-          descricao: 'Ensino de dança',
-          palavras: 'dança ballet aula escola academia',
-        },
-        {
-          codigo: '85.92-9/02',
-          descricao: 'Ensino de artes cênicas',
-          palavras: 'teatro arte cênica aula curso',
-        },
-        {
-          codigo: '85.92-9/03',
-          descricao: 'Ensino de música',
-          palavras: 'música aula instrumento conservatório',
-        },
-        {
-          codigo: '85.93-7/00',
-          descricao: 'Ensino de idiomas',
-          palavras: 'idioma língua inglês curso escola',
-        },
-        {
-          codigo: '85.99-6/01',
-          descricao: 'Formação de condutores',
-          palavras: 'auto escola direção habilitação cnh',
-        },
-        {
-          codigo: '85.99-6/03',
-          descricao: 'Treinamento em informática',
-          palavras: 'informática computador curso treinamento',
-        },
-        {
-          codigo: '85.99-6/04',
-          descricao: 'Treinamento em desenvolvimento',
-          palavras: 'treinamento desenvolvimento profissional curso',
-        },
-        {
-          codigo: '85.99-6/99',
-          descricao: 'Outras atividades de ensino',
-          palavras: 'ensino curso aula treinamento educação',
-        },
-
-        // SAÚDE E BEM-ESTAR
-        {
-          codigo: '86.10-1/01',
-          descricao: 'Hospitais',
-          palavras: 'hospital clínica internação médico',
-        },
-        {
-          codigo: '86.10-1/02',
-          descricao: 'Unidades de pronto-socorro',
-          palavras: 'pronto socorro emergência urgência hospital',
-        },
-        {
-          codigo: '86.21-6/01',
-          descricao: 'Centros de medicina nuclear',
-          palavras: 'medicina nuclear exame diagnóstico',
-        },
-        {
-          codigo: '86.21-6/02',
-          descricao: 'Serviços de tomografia',
-          palavras: 'tomografia exame diagnóstico imagem',
-        },
-        {
-          codigo: '86.22-4/00',
-          descricao: 'Clínicas e consultórios médicos',
-          palavras: 'clínica médico consultório doutor',
-        },
-        {
-          codigo: '86.30-5/01',
-          descricao: 'Consultório médico',
-          palavras: 'médico consultório clínica atendimento',
-        },
-        {
-          codigo: '86.30-5/02',
-          descricao: 'Consultório odontológico',
-          palavras: 'dentista odontologia dente consultório',
-        },
-        {
-          codigo: '86.30-5/03',
-          descricao: 'Clínica médica',
-          palavras: 'clínica médica saúde atendimento',
-        },
-        {
-          codigo: '86.30-5/04',
-          descricao: 'Clínica odontológica',
-          palavras: 'clínica dentária odontologia dente',
-        },
-        {
-          codigo: '86.30-5/06',
-          descricao: 'Serviços de vacinação',
-          palavras: 'vacinação vacina imunização clínica',
-        },
-        {
-          codigo: '86.30-5/07',
-          descricao: 'Atividades de reprodução assistida',
-          palavras: 'reprodução fertilização inseminação clínica',
-        },
-        {
-          codigo: '86.40-2/01',
-          descricao: 'Laboratórios de análises clínicas',
-          palavras: 'laboratório exame análise clínica sangue',
-        },
-        {
-          codigo: '86.40-2/02',
-          descricao: 'Laboratórios de anatomia patológica',
-          palavras: 'anatomia patologia laboratório biópsia',
-        },
-        {
-          codigo: '86.50-0/01',
-          descricao: 'Atividades de enfermagem',
-          palavras: 'enfermagem enfermeiro cuidado saúde',
-        },
-        {
-          codigo: '86.50-0/02',
-          descricao: 'Atividades de fisioterapia',
-          palavras: 'fisioterapia fisioterapeuta reabilitação',
-        },
-        {
-          codigo: '86.50-0/03',
-          descricao: 'Atividades de nutrição',
-          palavras: 'nutrição nutricionista dieta alimentação',
-        },
-        {
-          codigo: '86.50-0/04',
-          descricao: 'Atividades de psicologia',
-          palavras: 'psicologia psicólogo terapia mental',
-        },
-        {
-          codigo: '86.50-0/05',
-          descricao: 'Atividades de terapia ocupacional',
-          palavras: 'terapia ocupacional terapeuta reabilitação',
-        },
-        {
-          codigo: '86.50-0/06',
-          descricao: 'Atividades de fonoaudiologia',
-          palavras: 'fonoaudiologia fala audição voz',
-        },
-        {
-          codigo: '86.50-0/99',
-          descricao: 'Outras atividades de saúde',
-          palavras: 'saúde profissional atendimento clínica',
-        },
-        {
-          codigo: '86.90-9/01',
-          descricao: 'Práticas integrativas',
-          palavras: 'acupuntura homeopatia alternativa integrativa',
-        },
-        {
-          codigo: '86.90-9/02',
-          descricao: 'Atividades de banco de sangue',
-          palavras: 'banco sangue doação hemocentro',
-        },
-        {
-          codigo: '86.90-9/03',
-          descricao: 'Serviços de acupuntura',
-          palavras: 'acupuntura medicina chinesa terapia',
-        },
-        {
-          codigo: '86.90-9/04',
-          descricao: 'Atividades de podologia',
-          palavras: 'podologia pé cuidado saúde',
-        },
-        {
-          codigo: '86.90-9/99',
-          descricao: 'Outras atividades de saúde',
-          palavras: 'saúde terapia tratamento cuidado',
-        },
-        {
-          codigo: '75.00-1/00',
-          descricao: 'Atividades veterinárias',
-          palavras: 'veterinário animal pet clínica',
-        },
-
-        // CONSTRUÇÃO CIVIL
-        {
-          codigo: '41.10-7/00',
-          descricao: 'Incorporação imobiliária',
-          palavras: 'incorporação imobiliária construção empreendimento',
-        },
-        {
-          codigo: '41.20-4/00',
-          descricao: 'Construção de edifícios',
-          palavras: 'construção prédio edifício obra civil',
-        },
-        {
-          codigo: '42.11-1/01',
-          descricao: 'Construção de rodovias',
-          palavras: 'rodovia estrada asfalto pavimentação',
-        },
-        {
-          codigo: '42.13-8/00',
-          descricao: 'Obras de urbanização',
-          palavras: 'urbanização praça calçada pavimento',
-        },
-        {
-          codigo: '43.11-8/01',
-          descricao: 'Demolição de edifícios',
-          palavras: 'demolição edifício prédio derrubada',
-        },
-        {
-          codigo: '43.12-6/00',
-          descricao: 'Perfurações e sondagens',
-          palavras: 'perfuração sondagem solo poço',
-        },
-        {
-          codigo: '43.13-4/00',
-          descricao: 'Obras de terraplenagem',
-          palavras: 'terraplanagem escavação aterro movimentação',
-        },
-        {
-          codigo: '43.21-5/00',
-          descricao: 'Instalação elétrica',
-          palavras: 'elétrica instalação eletricista fiação',
-        },
-        {
-          codigo: '43.22-3/01',
-          descricao: 'Instalações hidráulicas',
-          palavras: 'hidráulica encanamento encanador água',
-        },
-        {
-          codigo: '43.22-3/02',
-          descricao: 'Instalação de ar condicionado',
-          palavras: 'ar condicionado instalação manutenção',
-        },
-        {
-          codigo: '43.30-4/01',
-          descricao: 'Impermeabilização',
-          palavras: 'impermeabilização vedação infiltração',
-        },
-        {
-          codigo: '43.30-4/02',
-          descricao: 'Instalação de portas e janelas',
-          palavras: 'porta janela esquadria instalação',
-        },
-        {
-          codigo: '43.30-4/03',
-          descricao: 'Obras de acabamento em gesso',
-          palavras: 'gesso drywall forro moldura',
-        },
-        {
-          codigo: '43.30-4/04',
-          descricao: 'Serviços de pintura',
-          palavras: 'pintura pintor parede acabamento',
-        },
-        {
-          codigo: '43.30-4/05',
-          descricao: 'Aplicação de revestimentos',
-          palavras: 'revestimento azulejo piso cerâmica',
-        },
-        {
-          codigo: '43.99-1/03',
-          descricao: 'Obras de alvenaria',
-          palavras: 'alvenaria pedreiro tijolo construção',
-        },
-
-        // TRANSPORTE E LOGÍSTICA
-        {
-          codigo: '49.23-0/01',
-          descricao: 'Serviço de táxi',
-          palavras: 'táxi transporte passageiro motorista',
-        },
-        {
-          codigo: '49.23-0/02',
-          descricao: 'Transporte por aplicativo',
-          palavras: 'uber 99 aplicativo motorista transporte',
-        },
-        {
-          codigo: '49.24-8/00',
-          descricao: 'Transporte escolar',
-          palavras: 'transporte escolar van ônibus escola',
-        },
-        {
-          codigo: '49.30-2/01',
-          descricao: 'Transporte de carga municipal',
-          palavras: 'frete caminhão carga mudança transporte',
-        },
-        {
-          codigo: '49.30-2/02',
-          descricao: 'Transporte de carga intermunicipal',
-          palavras: 'frete caminhão carga transporte intermunicipal',
-        },
-        {
-          codigo: '49.30-2/03',
-          descricao: 'Transporte de carga interestadual',
-          palavras: 'frete caminhão carga transporte interestadual',
-        },
-        {
-          codigo: '52.11-7/01',
-          descricao: 'Armazéns gerais',
-          palavras: 'armazém estoque guarda mercadoria',
-        },
-        {
-          codigo: '52.11-7/99',
-          descricao: 'Depósitos de mercadorias',
-          palavras: 'depósito estoque armazenamento guarda',
-        },
-        {
-          codigo: '52.12-5/00',
-          descricao: 'Carga e descarga',
-          palavras: 'carga descarga movimentação mercadoria',
-        },
-        {
-          codigo: '52.23-1/00',
-          descricao: 'Estacionamento de veículos',
-          palavras: 'estacionamento garagem vaga carro',
-        },
-        {
-          codigo: '52.29-0/01',
-          descricao: 'Serviços de apoio ao transporte',
-          palavras: 'logística transporte apoio despachante',
-        },
-        {
-          codigo: '52.29-0/02',
-          descricao: 'Serviços de reboque',
-          palavras: 'reboque guincho socorro veículo',
-        },
-        {
-          codigo: '53.10-5/01',
-          descricao: 'Correios nacional',
-          palavras: 'correio carta encomenda entrega',
-        },
-        {
-          codigo: '53.10-5/02',
-          descricao: 'Correios franqueado',
-          palavras: 'correio agência franquia postal',
-        },
-        {
-          codigo: '53.20-2/01',
-          descricao: 'Entrega rápida',
-          palavras: 'motoboy entrega delivery rápida',
-        },
-        {
-          codigo: '53.20-2/02',
-          descricao: 'Serviços de entrega',
-          palavras: 'entrega encomenda delivery transporte',
-        },
-
-        // CONSULTORIA E ASSESSORIA
-        {
-          codigo: '69.20-6/01',
-          descricao: 'Atividades de contabilidade',
-          palavras: 'contador contabilidade escritório fiscal',
-        },
-        {
-          codigo: '69.20-6/02',
-          descricao: 'Atividades de consultoria',
-          palavras: 'consultoria tributária fiscal contábil',
-        },
-        {
-          codigo: '70.20-4/00',
-          descricao: 'Consultoria em gestão empresarial',
-          palavras: 'consultoria gestão empresa administração negócio',
-        },
-        {
-          codigo: '71.11-1/00',
-          descricao: 'Serviços de arquitetura',
-          palavras: 'arquiteto arquitetura projeto construção',
-        },
-        {
-          codigo: '71.12-0/00',
-          descricao: 'Serviços de engenharia',
-          palavras: 'engenheiro engenharia projeto técnico',
-        },
-        {
-          codigo: '71.19-7/01',
-          descricao: 'Serviços de cartografia',
-          palavras: 'cartografia mapa topografia geodésia',
-        },
-        {
-          codigo: '71.19-7/03',
-          descricao: 'Serviços de perícia técnica',
-          palavras: 'perícia técnica laudo avaliação',
-        },
-        {
-          codigo: '71.20-1/00',
-          descricao: 'Testes e análises técnicas',
-          palavras: 'teste análise laboratório técnico',
-        },
-        {
-          codigo: '72.10-0/00',
-          descricao: 'Pesquisa e desenvolvimento',
-          palavras: 'pesquisa desenvolvimento p&d ciência',
-        },
-        {
-          codigo: '73.11-4/00',
-          descricao: 'Agências de publicidade',
-          palavras: 'publicidade propaganda marketing agência',
-        },
-        {
-          codigo: '73.12-2/00',
-          descricao: 'Agenciamento de espaços',
-          palavras: 'agenciamento mídia espaço publicidade',
-        },
-        {
-          codigo: '73.19-0/01',
-          descricao: 'Criação de estandes',
-          palavras: 'estande feira evento montagem',
-        },
-        {
-          codigo: '73.19-0/02',
-          descricao: 'Promoção de vendas',
-          palavras: 'promoção venda marketing merchandising',
-        },
-        {
-          codigo: '73.19-0/03',
-          descricao: 'Marketing direto',
-          palavras: 'marketing direto mala direta telemarketing',
-        },
-        {
-          codigo: '73.19-0/04',
-          descricao: 'Consultoria em publicidade',
-          palavras: 'consultoria publicidade marketing comunicação',
-        },
-        {
-          codigo: '73.20-3/00',
-          descricao: 'Pesquisas de mercado',
-          palavras: 'pesquisa mercado opinião estatística',
-        },
-        {
-          codigo: '74.10-2/02',
-          descricao: 'Design de interiores',
-          palavras: 'design interior decoração ambiente projeto',
-        },
-        {
-          codigo: '74.10-2/03',
-          descricao: 'Design de produto',
-          palavras: 'design produto industrial criação',
-        },
-        {
-          codigo: '74.10-2/99',
-          descricao: 'Atividades de design',
-          palavras: 'design gráfico visual criação arte',
-        },
-        {
-          codigo: '74.20-0/01',
-          descricao: 'Atividades de fotografia',
-          palavras: 'fotografia fotógrafo foto estúdio',
-        },
-        {
-          codigo: '74.20-0/04',
-          descricao: 'Filmagem de eventos',
-          palavras: 'filmagem vídeo evento festa casamento',
-        },
-        {
-          codigo: '74.90-1/01',
-          descricao: 'Serviços de tradução',
-          palavras: 'tradução intérprete idioma língua',
-        },
-        {
-          codigo: '74.90-1/04',
-          descricao: 'Atividades de intermediação',
-          palavras: 'intermediação negócio agenciamento broker',
-        },
-        {
-          codigo: '74.90-1/05',
-          descricao: 'Agenciamento de profissionais',
-          palavras: 'agenciamento profissional artista modelo',
-        },
-        {
-          codigo: '74.90-1/99',
-          descricao: 'Outras atividades profissionais',
-          palavras: 'consultoria assessoria profissional serviço',
-        },
-
-        // IMOBILIÁRIO
-        {
-          codigo: '68.10-2/01',
-          descricao: 'Compra e venda de imóveis',
-          palavras: 'imobiliária imóvel casa apartamento venda',
-        },
-        {
-          codigo: '68.10-2/02',
-          descricao: 'Aluguel de imóveis próprios',
-          palavras: 'aluguel imóvel locação proprietário',
-        },
-        {
-          codigo: '68.21-8/01',
-          descricao: 'Corretagem de imóveis',
-          palavras: 'corretor imóvel imobiliária venda aluguel',
-        },
-        {
-          codigo: '68.21-8/02',
-          descricao: 'Corretagem de contratos',
-          palavras: 'corretagem contrato compra venda imóvel',
-        },
-        {
-          codigo: '68.22-6/00',
-          descricao: 'Gestão e administração',
-          palavras: 'administração condomínio imóvel gestão',
-        },
-
-        // INDÚSTRIA E MANUFATURA
-        {
-          codigo: '14.12-6/01',
-          descricao: 'Confecção de peças do vestuário',
-          palavras: 'confecção roupa vestuário costura fábrica',
-        },
-        {
-          codigo: '14.12-6/02',
-          descricao: 'Confecção sob medida',
-          palavras: 'alfaiate costureira sob medida roupa',
-        },
-        {
-          codigo: '14.12-6/03',
-          descricao: 'Facção de peças do vestuário',
-          palavras: 'facção costura terceirizada roupa',
-        },
-        {
-          codigo: '15.31-9/01',
-          descricao: 'Fabricação de calçados',
-          palavras: 'calçado sapato tênis fábrica produção',
-        },
-        {
-          codigo: '16.22-6/02',
-          descricao: 'Fabricação de esquadrias',
-          palavras: 'porta janela madeira alumínio esquadria',
-        },
-        {
-          codigo: '31.01-2/00',
-          descricao: 'Fabricação de móveis',
-          palavras: 'móvel marcenaria fábrica mobília',
-        },
-        {
-          codigo: '31.02-1/00',
-          descricao: 'Fabricação de móveis de metal',
-          palavras: 'móvel metal ferro aço fábrica',
-        },
-        {
-          codigo: '32.11-6/01',
-          descricao: 'Lapidação de gemas',
-          palavras: 'pedra preciosa lapidação joia gema',
-        },
-        {
-          codigo: '32.11-6/02',
-          descricao: 'Fabricação de artefatos',
-          palavras: 'joalheria ourives joia ouro prata',
-        },
-        {
-          codigo: '32.12-4/00',
-          descricao: 'Fabricação de bijuterias',
-          palavras: 'bijuteria acessório moda fabricação',
-        },
-        {
-          codigo: '32.99-0/01',
-          descricao: 'Fabricação de guarda-chuvas',
-          palavras: 'guarda-chuva sombrinha fabricação',
-        },
-        {
-          codigo: '32.99-0/03',
-          descricao: 'Fabricação de letras e placas',
-          palavras: 'placa letreiro luminoso sinalização',
-        },
-        {
-          codigo: '32.99-0/04',
-          descricao: 'Fabricação de painéis',
-          palavras: 'painel outdoor placa publicidade',
-        },
-        {
-          codigo: '32.99-0/05',
-          descricao: 'Fabricação de aviamentos',
-          palavras: 'aviamento zíper botão armarinho',
-        },
-
-        // OUTROS SERVIÇOS
-        {
-          codigo: '77.11-0/00',
-          descricao: 'Locação de automóveis',
-          palavras: 'aluguel carro automóvel locadora veículo',
-        },
-        {
-          codigo: '77.19-5/01',
-          descricao: 'Locação de embarcações',
-          palavras: 'aluguel barco lancha jet ski náutica',
-        },
-        {
-          codigo: '77.21-7/00',
-          descricao: 'Aluguel de equipamentos',
-          palavras: 'aluguel equipamento esporte lazer',
-        },
-        {
-          codigo: '77.22-5/00',
-          descricao: 'Aluguel de DVDs',
-          palavras: 'locadora dvd filme vídeo aluguel',
-        },
-        {
-          codigo: '77.23-3/00',
-          descricao: 'Aluguel de objetos pessoais',
-          palavras: 'aluguel objeto roupa fantasia utensílio',
-        },
-        {
-          codigo: '77.29-2/01',
-          descricao: 'Aluguel de aparelhos de jogos',
-          palavras: 'aluguel videogame jogo eletrônico',
-        },
-        {
-          codigo: '77.29-2/02',
-          descricao: 'Aluguel de móveis',
-          palavras: 'aluguel móvel mobília evento festa',
-        },
-        {
-          codigo: '77.29-2/03',
-          descricao: 'Aluguel de material médico',
-          palavras: 'aluguel equipamento médico hospitalar',
-        },
-        {
-          codigo: '77.31-4/00',
-          descricao: 'Aluguel de máquinas agrícolas',
-          palavras: 'aluguel máquina trator agrícola equipamento',
-        },
-        {
-          codigo: '77.32-2/01',
-          descricao: 'Aluguel de máquinas para construção',
-          palavras: 'aluguel máquina construção betoneira andaime',
-        },
-        {
-          codigo: '77.32-2/02',
-          descricao: 'Aluguel de andaimes',
-          palavras: 'andaime aluguel locação construção',
-        },
-        {
-          codigo: '77.33-1/00',
-          descricao: 'Aluguel de máquinas de escritório',
-          palavras: 'aluguel copiadora impressora escritório',
-        },
-        {
-          codigo: '77.39-0/01',
-          descricao: 'Aluguel de palcos',
-          palavras: 'aluguel palco som iluminação evento',
-        },
-        {
-          codigo: '77.39-0/02',
-          descricao: 'Aluguel de equipamentos científicos',
-          palavras: 'aluguel equipamento científico médico laboratório',
-        },
-        {
-          codigo: '77.39-0/03',
-          descricao: 'Aluguel de objetos de decoração',
-          palavras: 'aluguel decoração festa evento ornamento',
-        },
-        {
-          codigo: '77.39-0/99',
-          descricao: 'Aluguel de outras máquinas',
-          palavras: 'aluguel máquina equipamento locação',
-        },
-        {
-          codigo: '78.10-8/00',
-          descricao: 'Seleção de pessoal',
-          palavras: 'recrutamento seleção rh recursos humanos',
-        },
-        {
-          codigo: '78.20-5/00',
-          descricao: 'Locação de mão-de-obra',
-          palavras: 'terceirização mão obra temporário',
-        },
-        {
-          codigo: '78.30-2/00',
-          descricao: 'Fornecimento de recursos humanos',
-          palavras: 'recursos humanos rh terceirização pessoal',
-        },
-        {
-          codigo: '79.11-2/00',
-          descricao: 'Agências de viagens',
-          palavras: 'agência viagem turismo pacote passagem',
-        },
-        {
-          codigo: '79.12-1/00',
-          descricao: 'Operadores turísticos',
-          palavras: 'operadora turismo viagem excursão pacote',
-        },
-        {
-          codigo: '79.90-2/00',
-          descricao: 'Serviços de turismo',
-          palavras: 'guia turístico turismo receptivo transfer',
-        },
-        {
-          codigo: '80.11-1/01',
-          descricao: 'Atividades de vigilância',
-          palavras: 'vigilância segurança vigia guarda',
-        },
-        {
-          codigo: '80.11-1/02',
-          descricao: 'Serviços de adestramento',
-          palavras: 'adestramento cão guarda segurança treinamento',
-        },
-        {
-          codigo: '80.12-9/00',
-          descricao: 'Atividades de transporte de valores',
-          palavras: 'transporte valores carro forte segurança',
-        },
-        {
-          codigo: '80.20-0/01',
-          descricao: 'Atividades de monitoramento',
-          palavras: 'monitoramento alarme câmera segurança',
-        },
-        {
-          codigo: '80.20-0/02',
-          descricao: 'Outras atividades de segurança',
-          palavras: 'segurança eletrônica sistema alarme',
-        },
-        {
-          codigo: '80.30-7/00',
-          descricao: 'Atividades de investigação',
-          palavras: 'detetive investigação particular segurança',
-        },
-        {
-          codigo: '81.11-7/00',
-          descricao: 'Serviços combinados de escritório',
-          palavras: 'administração prédio condomínio facility',
-        },
-        {
-          codigo: '81.12-5/00',
-          descricao: 'Condomínios prediais',
-          palavras: 'condomínio prédio administração síndico',
-        },
-        {
-          codigo: '81.21-4/00',
-          descricao: 'Limpeza geral de prédios',
-          palavras: 'limpeza faxina prédio escritório',
-        },
-        {
-          codigo: '81.22-2/00',
-          descricao: 'Limpeza especializada',
-          palavras: 'limpeza industrial especializada técnica',
-        },
-        {
-          codigo: '81.29-0/00',
-          descricao: 'Atividades de limpeza',
-          palavras: 'limpeza higienização sanitização desinfecção',
-        },
-        {
-          codigo: '81.30-3/00',
-          descricao: 'Atividades paisagísticas',
-          palavras: 'jardinagem paisagismo jardim manutenção',
-        },
-        {
-          codigo: '82.91-1/00',
-          descricao: 'Atividades de cobrança',
-          palavras: 'cobrança inadimplência recuperação crédito',
-        },
-        {
-          codigo: '82.92-0/00',
-          descricao: 'Envasamento e empacotamento',
-          palavras: 'embalagem empacotamento envase terceirizado',
-        },
-        {
-          codigo: '82.99-7/01',
-          descricao: 'Medição de consumo',
-          palavras: 'leitura medidor água luz gás',
-        },
-        {
-          codigo: '82.99-7/03',
-          descricao: 'Serviços de gravação',
-          palavras: 'gravação áudio voz locução estúdio',
-        },
-        {
-          codigo: '82.99-7/04',
-          descricao: 'Leiloeiro independente',
-          palavras: 'leilão leiloeiro arrematação venda',
-        },
-        {
-          codigo: '82.99-7/05',
-          descricao: 'Serviços de levantamento',
-          palavras: 'levantamento dados pesquisa campo',
-        },
-        {
-          codigo: '82.99-7/07',
-          descricao: 'Salas de acesso à internet',
-          palavras: 'lan house cyber café internet computador',
-        },
-
-        // ATIVIDADES RECREATIVAS E CULTURAIS
-        {
-          codigo: '90.01-9/01',
-          descricao: 'Produção teatral',
-          palavras: 'teatro peça espetáculo produção cultural',
-        },
-        {
-          codigo: '90.01-9/02',
-          descricao: 'Produção musical',
-          palavras: 'música show concerto produção evento',
-        },
-        {
-          codigo: '90.01-9/03',
-          descricao: 'Produção de espetáculos',
-          palavras: 'dança ballet espetáculo produção',
-        },
-        {
-          codigo: '90.01-9/04',
-          descricao: 'Produção de espetáculos circenses',
-          palavras: 'circo espetáculo produção entretenimento',
-        },
-        {
-          codigo: '90.01-9/05',
-          descricao: 'Produção de espetáculos de rodeio',
-          palavras: 'rodeio vaquejada espetáculo evento',
-        },
-        {
-          codigo: '90.01-9/06',
-          descricao: 'Atividades de sonorização',
-          palavras: 'som iluminação evento festa dj',
-        },
-        {
-          codigo: '90.01-9/99',
-          descricao: 'Outras atividades artísticas',
-          palavras: 'arte cultura espetáculo produção',
-        },
-        {
-          codigo: '90.02-7/01',
-          descricao: 'Atividades de artistas',
-          palavras: 'artista ator músico cantor',
-        },
-        {
-          codigo: '90.02-7/02',
-          descricao: 'Restauração de obras de arte',
-          palavras: 'restauração arte obra pintura',
-        },
-        {
-          codigo: '90.03-5/00',
-          descricao: 'Gestão de espaços',
-          palavras: 'teatro auditório casa show gestão',
-        },
-        {
-          codigo: '91.01-5/00',
-          descricao: 'Atividades de bibliotecas',
-          palavras: 'biblioteca arquivo livro acervo',
-        },
-        {
-          codigo: '91.02-3/01',
-          descricao: 'Atividades de museus',
-          palavras: 'museu exposição galeria arte',
-        },
-        {
-          codigo: '91.02-3/02',
-          descricao: 'Restauração de prédios históricos',
-          palavras: 'restauração patrimônio histórico prédio',
-        },
-        {
-          codigo: '91.03-1/00',
-          descricao: 'Atividades de jardins botânicos',
-          palavras: 'jardim botânico zoológico parque animal',
-        },
-        {
-          codigo: '92.00-3/01',
-          descricao: 'Casas de bingo',
-          palavras: 'bingo jogo sorte entretenimento',
-        },
-        {
-          codigo: '92.00-3/02',
-          descricao: 'Exploração de apostas',
-          palavras: 'aposta loteria jogo sorte',
-        },
-        {
-          codigo: '92.00-3/99',
-          descricao: 'Outras atividades de jogos',
-          palavras: 'jogo azar sorte entretenimento',
-        },
-        {
-          codigo: '93.11-5/00',
-          descricao: 'Gestão de instalações esportivas',
-          palavras: 'ginásio quadra campo esporte',
-        },
-        {
-          codigo: '93.12-3/00',
-          descricao: 'Clubes sociais e esportivos',
-          palavras: 'clube esporte social recreação',
-        },
-        {
-          codigo: '93.13-1/00',
-          descricao: 'Atividades de condicionamento',
-          palavras: 'academia fitness ginástica musculação',
-        },
-        {
-          codigo: '93.19-1/01',
-          descricao: 'Produção de eventos esportivos',
-          palavras: 'evento esporte competição campeonato',
-        },
-        {
-          codigo: '93.19-1/99',
-          descricao: 'Outras atividades esportivas',
-          palavras: 'esporte atividade física recreação',
-        },
-        {
-          codigo: '93.21-2/00',
-          descricao: 'Parques de diversão',
-          palavras: 'parque diversão temático entretenimento',
-        },
-        {
-          codigo: '93.29-8/01',
-          descricao: 'Discotecas e danceterias',
-          palavras: 'boate discoteca balada danceteria',
-        },
-        {
-          codigo: '93.29-8/02',
-          descricao: 'Exploração de boliches',
-          palavras: 'boliche bowling entretenimento jogo',
-        },
-        {
-          codigo: '93.29-8/03',
-          descricao: 'Exploração de jogos eletrônicos',
-          palavras: 'fliperama videogame arcade jogo',
-        },
-        {
-          codigo: '93.29-8/04',
-          descricao: 'Exploração de jogos',
-          palavras: 'sinuca bilhar snooker jogo',
-        },
-        {
-          codigo: '93.29-8/99',
-          descricao: 'Outras atividades de recreação',
-          palavras: 'lazer recreação entretenimento diversão',
-        },
-
-        // ORGANIZAÇÕES ASSOCIATIVAS
-        {
-          codigo: '94.11-1/00',
-          descricao: 'Atividades de organizações',
-          palavras: 'associação empresarial patronal comercial',
-        },
-        {
-          codigo: '94.12-0/00',
-          descricao: 'Atividades de organizações profissionais',
-          palavras: 'conselho ordem profissional sindicato',
-        },
-        {
-          codigo: '94.20-1/00',
-          descricao: 'Atividades de sindicatos',
-          palavras: 'sindicato trabalhador categoria profissional',
-        },
-        {
-          codigo: '94.30-8/00',
-          descricao: 'Atividades de associações',
-          palavras: 'associação defesa direito social',
-        },
-        {
-          codigo: '94.91-0/00',
-          descricao: 'Atividades de organizações religiosas',
-          palavras: 'igreja templo religião culto',
-        },
-        {
-          codigo: '94.92-8/00',
-          descricao: 'Atividades de organizações políticas',
-          palavras: 'partido político campanha eleição',
-        },
-        {
-          codigo: '94.93-6/00',
-          descricao: 'Atividades de organizações',
-          palavras: 'ong organização social assistência',
-        },
-        {
-          codigo: '94.99-5/00',
-          descricao: 'Outras atividades associativas',
-          palavras: 'associação clube organização social',
-        },
-      ];
-
-      // Contador de CNAEs secundários
-      let contadorCnaesSecundarios = 0;
-
-      // Função para mostrar aba
-      function showTab(tabId) {
-        // Remove active de todas as abas
-        document.querySelectorAll('.tab-content').forEach((tab) => {
-          tab.classList.remove('active');
-        });
-        document.querySelectorAll('.tab-btn').forEach((btn) => {
-          btn.classList.remove('active');
-        });
-
-        // Adiciona active na aba selecionada
-        document.getElementById(tabId).classList.add('active');
-        event.target.classList.add('active');
-
-        // Se for a aba de custos, calcular
-        if (tabId === 'custos') {
-          calcularCustos();
-        }
-      }
-
-      // Função para buscar CNAEs
-      function buscarCNAE(tipo) {
-        const input =
-          tipo === 'principal'
-            ? document.getElementById('buscaCnaePrincipal')
-            : document.getElementById(`buscaCnaeSecundario${tipo}`);
-
-        const sugestoesDiv =
-          tipo === 'principal'
-            ? document.getElementById('sugestoesPrincipal')
-            : document.getElementById(`sugestoesSecundario${tipo}`);
-
-        const busca = input.value.toLowerCase();
-
-        if (busca.length < 2) {
-          sugestoesDiv.classList.remove('active');
-          return;
+            // Se for a aba de custos, calcular
+            if (tabId === 'custos') {
+                calcularCustos();
+            }
         }
 
-        const resultados = cnaes
-          .filter(
-            (cnae) =>
-              cnae.descricao.toLowerCase().includes(busca) ||
-              cnae.palavras.toLowerCase().includes(busca) ||
-              cnae.codigo.includes(busca)
-          )
-          .slice(0, 10);
-
-        if (resultados.length > 0) {
-          sugestoesDiv.innerHTML = resultados
-            .map(
-              (cnae) => `
+        // Função para buscar CNAEs
+        function buscarCNAE(tipo) {
+            const input = tipo === 'principal' 
+                ? document.getElementById('buscaCnaePrincipal')
+                : document.getElementById(`buscaCnaeSecundario${tipo}`);
+            
+            const sugestoesDiv = tipo === 'principal'
+                ? document.getElementById('sugestoesPrincipal')
+                : document.getElementById(`sugestoesSecundario${tipo}`);
+            
+            const busca = input.value.toLowerCase();
+            
+            if (busca.length < 2) {
+                sugestoesDiv.classList.remove('active');
+                return;
+            }
+            
+            const resultados = cnaes.filter(cnae => 
+                cnae.descricao.toLowerCase().includes(busca) ||
+                cnae.palavras.toLowerCase().includes(busca) ||
+                cnae.codigo.includes(busca)
+            ).slice(0, 10);
+            
+            if (resultados.length > 0) {
+                sugestoesDiv.innerHTML = resultados.map(cnae => `
                     <div class="cnae-item" onclick="selecionarCNAE('${tipo}', '${cnae.codigo}', '${cnae.descricao}')">
                         <span class="cnae-codigo">${cnae.codigo}</span>
                         <span>${cnae.descricao}</span>
                     </div>
-                `
-            )
-            .join('');
-          sugestoesDiv.classList.add('active');
-        } else {
-          sugestoesDiv.innerHTML =
-            '<div class="cnae-item">Nenhum CNAE encontrado</div>';
-          sugestoesDiv.classList.add('active');
+                `).join('');
+                sugestoesDiv.classList.add('active');
+            } else {
+                sugestoesDiv.innerHTML = '<div class="cnae-item">Nenhum CNAE encontrado</div>';
+                sugestoesDiv.classList.add('active');
+            }
         }
-      }
 
-      // Função para selecionar CNAE
-      function selecionarCNAE(tipo, codigo, descricao) {
-        if (tipo === 'principal') {
-          estado.cnaePrincipal = { codigo, descricao };
-          document.getElementById('cnaePrincipalSelecionado').innerHTML = `
+        // Função para selecionar CNAE
+        function selecionarCNAE(tipo, codigo, descricao) {
+            if (tipo === 'principal') {
+                estado.cnaePrincipal = {codigo, descricao};
+                document.getElementById('cnaePrincipalSelecionado').innerHTML = `
                     <div class="cnae-selected">
                         <strong>${codigo}</strong> - ${descricao}
                         <button class="btn btn-danger" style="float: right;" onclick="removerCNAE('principal')">Remover</button>
                     </div>
                 `;
-          document.getElementById('buscaCnaePrincipal').value = '';
-          document
-            .getElementById('sugestoesPrincipal')
-            .classList.remove('active');
-        } else {
-          const index = parseInt(tipo);
-          if (!estado.cnaesSecundarios[index]) {
-            estado.cnaesSecundarios[index] = {};
-          }
-          estado.cnaesSecundarios[index] = { codigo, descricao };
-
-          document.getElementById(
-            `cnaeSecundarioSelecionado${tipo}`
-          ).innerHTML = `
+                document.getElementById('buscaCnaePrincipal').value = '';
+                document.getElementById('sugestoesPrincipal').classList.remove('active');
+            } else {
+                const index = parseInt(tipo);
+                if (!estado.cnaesSecundarios[index]) {
+                    estado.cnaesSecundarios[index] = {};
+                }
+                estado.cnaesSecundarios[index] = {codigo, descricao};
+                
+                document.getElementById(`cnaeSecundarioSelecionado${tipo}`).innerHTML = `
                     <div class="cnae-selected">
                         <strong>${codigo}</strong> - ${descricao}
                     </div>
                 `;
-          document.getElementById(`buscaCnaeSecundario${tipo}`).value = '';
-          document
-            .getElementById(`sugestoesSecundario${tipo}`)
-            .classList.remove('active');
-        }
-      }
-
-      // Função para remover CNAE
-      function removerCNAE(tipo) {
-        if (tipo === 'principal') {
-          estado.cnaePrincipal = null;
-          document.getElementById('cnaePrincipalSelecionado').innerHTML = '';
-        }
-      }
-
-      // Função para adicionar CNAE secundário
-      function adicionarCNAESecundario() {
-        if (contadorCnaesSecundarios >= 4) {
-          alert('Máximo de 4 CNAEs secundários permitidos');
-          return;
+                document.getElementById(`buscaCnaeSecundario${tipo}`).value = '';
+                document.getElementById(`sugestoesSecundario${tipo}`).classList.remove('active');
+            }
         }
 
-        const container = document.getElementById('cnaesSecundarios');
-        const index = contadorCnaesSecundarios;
+        // Função para remover CNAE
+        function removerCNAE(tipo) {
+            if (tipo === 'principal') {
+                estado.cnaePrincipal = null;
+                document.getElementById('cnaePrincipalSelecionado').innerHTML = '';
+            }
+        }
 
-        const div = document.createElement('div');
-        div.className = 'card';
-        div.id = `cnaeSecundarioContainer${index}`;
-        div.innerHTML = `
+        // Função para adicionar CNAE secundário
+        function adicionarCNAESecundario() {
+            if (contadorCnaesSecundarios >= 4) {
+                alert('Máximo de 4 CNAEs secundários permitidos');
+                return;
+            }
+            
+            const container = document.getElementById('cnaesSecundarios');
+            const index = contadorCnaesSecundarios;
+            
+            const div = document.createElement('div');
+            div.className = 'card';
+            div.id = `cnaeSecundarioContainer${index}`;
+            div.innerHTML = `
                 <div class="card-header">
                     <span class="card-title">CNAE Secundário ${index + 1}</span>
                     <button class="btn btn-danger" onclick="removerCNAESecundario(${index})">Remover</button>
@@ -2313,80 +1215,68 @@
                 </div>
                 <div id="cnaeSecundarioSelecionado${index}"></div>
             `;
-
-        container.appendChild(div);
-        contadorCnaesSecundarios++;
-      }
-
-      // Função para remover CNAE secundário
-      function removerCNAESecundario(index) {
-        const container = document.getElementById(
-          `cnaeSecundarioContainer${index}`
-        );
-        container.remove();
-        estado.cnaesSecundarios.splice(index, 1);
-        contadorCnaesSecundarios--;
-
-        // Reordenar os índices
-        const containers = document.getElementById('cnaesSecundarios').children;
-        for (let i = 0; i < containers.length; i++) {
-          containers[i].id = `cnaeSecundarioContainer${i}`;
-          containers[i].querySelector(
-            '.card-title'
-          ).textContent = `CNAE Secundário ${i + 1}`;
-        }
-      }
-
-      // Função para sugerir CNAEs baseado no ramo
-      function sugerirCNAEs() {
-        const ramo = document.getElementById('ramoAtividade').value;
-        if (!ramo) return;
-
-        // Mapeamento de ramos para CNAEs sugeridos
-        const sugestoes = {
-          alimentacao: ['56.11-2/01', '56.11-2/03', '56.20-1/01', '10.91-1/02'],
-          comercio: ['47.12-1/00', '47.81-4/00', '47.61-0/03', '47.89-0/99'],
-          servicos: ['82.99-7/99', '82.11-3/00', '96.09-2/99', '74.90-1/99'],
-          tecnologia: ['62.01-5/01', '62.04-0/00', '95.11-8/00', '63.19-4/00'],
-          saude: ['86.30-5/03', '86.50-0/04', '96.02-5/02', '86.90-9/99'],
-          educacao: ['85.99-6/99', '85.93-7/00', '85.91-1/00', '85.99-6/03'],
-          construcao: ['41.20-4/00', '43.30-4/04', '43.21-5/00', '43.99-1/03'],
-          transporte: ['49.30-2/01', '49.23-0/02', '53.20-2/01', '52.29-0/01'],
-          consultoria: ['70.20-4/00', '69.20-6/02', '74.90-1/99', '62.04-0/00'],
-          imobiliario: ['68.21-8/01', '68.22-6/00', '68.10-2/02', '41.10-7/00'],
-        };
-
-        const cnaesSugeridos = sugestoes[ramo] || [];
-        if (cnaesSugeridos.length > 0 && !estado.cnaePrincipal) {
-          const primeiroCnae = cnaes.find(
-            (c) => c.codigo === cnaesSugeridos[0]
-          );
-          if (primeiroCnae) {
-            selecionarCNAE(
-              'principal',
-              primeiroCnae.codigo,
-              primeiroCnae.descricao
-            );
-          }
-        }
-      }
-
-      // Função para gerar campos de funcionários
-      function gerarCamposFuncionarios() {
-        const qtd =
-          parseInt(document.getElementById('qtdFuncionarios').value) || 0;
-        const container = document.getElementById('listaFuncionarios');
-
-        if (qtd === 0) {
-          container.innerHTML =
-            '<div class="alert alert-info">Nenhum funcionário será contratado inicialmente.</div>';
-          estado.funcionarios = [];
-          return;
+            
+            container.appendChild(div);
+            contadorCnaesSecundarios++;
         }
 
-        let html = '';
-        for (let i = 0; i < qtd; i++) {
-          html += `
+        // Função para remover CNAE secundário
+        function removerCNAESecundario(index) {
+            const container = document.getElementById(`cnaeSecundarioContainer${index}`);
+            container.remove();
+            estado.cnaesSecundarios.splice(index, 1);
+            contadorCnaesSecundarios--;
+            
+            // Reordenar os índices
+            const containers = document.getElementById('cnaesSecundarios').children;
+            for (let i = 0; i < containers.length; i++) {
+                containers[i].id = `cnaeSecundarioContainer${i}`;
+                containers[i].querySelector('.card-title').textContent = `CNAE Secundário ${i + 1}`;
+            }
+        }
+
+        // Função para sugerir CNAEs baseado no ramo
+        function sugerirCNAEs() {
+            const ramo = document.getElementById('ramoAtividade').value;
+            if (!ramo) return;
+            
+            // Mapeamento de ramos para CNAEs sugeridos
+            const sugestoes = {
+                'alimentacao': ['56.11-2/01', '56.11-2/03', '56.20-1/01', '10.91-1/02'],
+                'comercio': ['47.12-1/00', '47.81-4/00', '47.61-0/03', '47.89-0/99'],
+                'servicos': ['82.99-7/99', '82.11-3/00', '96.09-2/99', '74.90-1/99'],
+                'tecnologia': ['62.01-5/01', '62.04-0/00', '95.11-8/00', '63.19-4/00'],
+                'saude': ['86.30-5/03', '86.50-0/04', '96.02-5/02', '86.90-9/99'],
+                'educacao': ['85.99-6/99', '85.93-7/00', '85.91-1/00', '85.99-6/03'],
+                'construcao': ['41.20-4/00', '43.30-4/04', '43.21-5/00', '43.99-1/03'],
+                'transporte': ['49.30-2/01', '49.23-0/02', '53.20-2/01', '52.29-0/01'],
+                'consultoria': ['70.20-4/00', '69.20-6/02', '74.90-1/99', '62.04-0/00'],
+                'imobiliario': ['68.21-8/01', '68.22-6/00', '68.10-2/02', '41.10-7/00']
+            };
+            
+            const cnaesSugeridos = sugestoes[ramo] || [];
+            if (cnaesSugeridos.length > 0 && !estado.cnaePrincipal) {
+                const primeiroCnae = cnaes.find(c => c.codigo === cnaesSugeridos[0]);
+                if (primeiroCnae) {
+                    selecionarCNAE('principal', primeiroCnae.codigo, primeiroCnae.descricao);
+                }
+            }
+        }
+
+        // Função para gerar campos de funcionários
+        function gerarCamposFuncionarios() {
+            const qtd = parseInt(document.getElementById('qtdFuncionarios').value) || 0;
+            const container = document.getElementById('listaFuncionarios');
+            
+            if (qtd === 0) {
+                container.innerHTML = '<div class="alert alert-info">Nenhum funcionário será contratado inicialmente.</div>';
+                estado.funcionarios = [];
+                return;
+            }
+            
+            let html = '';
+            for (let i = 0; i < qtd; i++) {
+                html += `
                     <div class="funcionario-card">
                         <h4>Funcionário ${i + 1}</h4>
                         <div class="grid grid-3">
@@ -2409,526 +1299,342 @@
                         </div>
                     </div>
                 `;
+            }
+            
+            container.innerHTML = html;
+            
+            // Atualizar estado
+            estado.funcionarios = [];
+            for (let i = 0; i < qtd; i++) {
+                estado.funcionarios.push({
+                    cargo: '',
+                    salario: 1412,
+                    tipo: 'clt'
+                });
+            }
         }
 
-        container.innerHTML = html;
-
-        // Atualizar estado
-        estado.funcionarios = [];
-        for (let i = 0; i < qtd; i++) {
-          estado.funcionarios.push({
-            cargo: '',
-            salario: 1412,
-            tipo: 'clt',
-          });
-        }
-      }
-
-      // Função para calcular custos
-      function calcularCustos() {
-        const cidade = document.getElementById('cidade').value;
-
-        // Custos por cidade
-        const custosPorCidade = {
-          sp: {
-            junta: 800,
-            alvara: 1500,
-            certificado: 450,
-            contador: 2000,
-            aluguel: 3500,
-            utilidades: 800,
-          },
-          rj: {
-            junta: 750,
-            alvara: 1400,
-            certificado: 450,
-            contador: 1800,
-            aluguel: 3000,
-            utilidades: 750,
-          },
-          mg: {
-            junta: 600,
-            alvara: 1000,
-            certificado: 400,
-            contador: 1500,
-            aluguel: 2000,
-            utilidades: 600,
-          },
-          df: {
-            junta: 700,
-            alvara: 1200,
-            certificado: 450,
-            contador: 1700,
-            aluguel: 2800,
-            utilidades: 700,
-          },
-          pr: {
-            junta: 550,
-            alvara: 900,
-            certificado: 400,
-            contador: 1400,
-            aluguel: 1800,
-            utilidades: 550,
-          },
-          rs: {
-            junta: 600,
-            alvara: 950,
-            certificado: 400,
-            contador: 1450,
-            aluguel: 1900,
-            utilidades: 580,
-          },
-          ba: {
-            junta: 500,
-            alvara: 800,
-            certificado: 350,
-            contador: 1200,
-            aluguel: 1500,
-            utilidades: 500,
-          },
-          ce: {
-            junta: 450,
-            alvara: 750,
-            certificado: 350,
-            contador: 1100,
-            aluguel: 1400,
-            utilidades: 480,
-          },
-          pe: {
-            junta: 480,
-            alvara: 780,
-            certificado: 350,
-            contador: 1150,
-            aluguel: 1450,
-            utilidades: 490,
-          },
-          am: {
-            junta: 520,
-            alvara: 850,
-            certificado: 380,
-            contador: 1300,
-            aluguel: 1600,
-            utilidades: 520,
-          },
-          go: {
-            junta: 460,
-            alvara: 720,
-            certificado: 350,
-            contador: 1050,
-            aluguel: 1350,
-            utilidades: 470,
-          },
-          sc: {
-            junta: 580,
-            alvara: 920,
-            certificado: 400,
-            contador: 1380,
-            aluguel: 1750,
-            utilidades: 560,
-          },
-        };
-
-        const custos = custosPorCidade[cidade] || {
-          junta: 500,
-          alvara: 800,
-          certificado: 400,
-          contador: 1200,
-          aluguel: 1500,
-          utilidades: 500,
-        };
-
-        // Atualizar custos de abertura
-        document.getElementById(
-          'custoJunta'
-        ).textContent = `R$ ${custos.junta.toFixed(2)}`;
-        document.getElementById(
-          'custoAlvara'
-        ).textContent = `R$ ${custos.alvara.toFixed(2)}`;
-        document.getElementById(
-          'custoCertificado'
-        ).textContent = `R$ ${custos.certificado.toFixed(2)}`;
-        document.getElementById(
-          'custoContador'
-        ).textContent = `R$ ${custos.contador.toFixed(2)}`;
-
-        const totalAbertura =
-          custos.junta + custos.alvara + custos.certificado + custos.contador;
-        document.getElementById(
-          'totalAbertura'
-        ).textContent = `R$ ${totalAbertura.toFixed(2)}`;
-
-        // Calcular folha de pagamento
-        let folhaTotal = 0;
-        const qtdFunc =
-          parseInt(document.getElementById('qtdFuncionarios').value) || 0;
-
-        for (let i = 0; i < qtdFunc; i++) {
-          const salario =
-            parseFloat(document.getElementById(`salario${i}`)?.value) || 1412;
-          const tipo = document.getElementById(`tipo${i}`)?.value || 'clt';
-
-          if (tipo === 'clt') {
-            // CLT com encargos (INSS, FGTS, 13º, Férias)
-            folhaTotal += salario * 1.8;
-          } else if (tipo === 'pj') {
-            folhaTotal += salario * 1.1;
-          } else {
-            folhaTotal += salario;
-          }
+        // Função para calcular custos
+        function calcularCustos() {
+            const cidade = document.getElementById('cidade').value;
+            
+            // Custos por cidade
+            const custosPorCidade = {
+                'sp': {junta: 800, alvara: 1500, certificado: 450, contador: 2000, aluguel: 3500, utilidades: 800},
+                'rj': {junta: 750, alvara: 1400, certificado: 450, contador: 1800, aluguel: 3000, utilidades: 750},
+                'mg': {junta: 600, alvara: 1000, certificado: 400, contador: 1500, aluguel: 2000, utilidades: 600},
+                'df': {junta: 700, alvara: 1200, certificado: 450, contador: 1700, aluguel: 2800, utilidades: 700},
+                'pr': {junta: 550, alvara: 900, certificado: 400, contador: 1400, aluguel: 1800, utilidades: 550},
+                'rs': {junta: 600, alvara: 950, certificado: 400, contador: 1450, aluguel: 1900, utilidades: 580},
+                'ba': {junta: 500, alvara: 800, certificado: 350, contador: 1200, aluguel: 1500, utilidades: 500},
+                'ce': {junta: 450, alvara: 750, certificado: 350, contador: 1100, aluguel: 1400, utilidades: 480},
+                'pe': {junta: 480, alvara: 780, certificado: 350, contador: 1150, aluguel: 1450, utilidades: 490},
+                'am': {junta: 520, alvara: 850, certificado: 380, contador: 1300, aluguel: 1600, utilidades: 520},
+                'go': {junta: 460, alvara: 720, certificado: 350, contador: 1050, aluguel: 1350, utilidades: 470},
+                'sc': {junta: 580, alvara: 920, certificado: 400, contador: 1380, aluguel: 1750, utilidades: 560}
+            };
+            
+            const custos = custosPorCidade[cidade] || {junta: 500, alvara: 800, certificado: 400, contador: 1200, aluguel: 1500, utilidades: 500};
+            
+            // Atualizar custos de abertura
+            document.getElementById('custoJunta').textContent = `R$ ${custos.junta.toFixed(2)}`;
+            document.getElementById('custoAlvara').textContent = `R$ ${custos.alvara.toFixed(2)}`;
+            document.getElementById('custoCertificado').textContent = `R$ ${custos.certificado.toFixed(2)}`;
+            document.getElementById('custoContador').textContent = `R$ ${custos.contador.toFixed(2)}`;
+            
+            const totalAbertura = custos.junta + custos.alvara + custos.certificado + custos.contador;
+            document.getElementById('totalAbertura').textContent = `R$ ${totalAbertura.toFixed(2)}`;
+            
+            // Calcular folha de pagamento
+            let folhaTotal = 0;
+            const qtdFunc = parseInt(document.getElementById('qtdFuncionarios').value) || 0;
+            
+            for (let i = 0; i < qtdFunc; i++) {
+                const salario = parseFloat(document.getElementById(`salario${i}`)?.value) || 1412;
+                const tipo = document.getElementById(`tipo${i}`)?.value || 'clt';
+                
+                if (tipo === 'clt') {
+                    // CLT com encargos (INSS, FGTS, 13º, Férias)
+                    folhaTotal += salario * 1.8;
+                } else if (tipo === 'pj') {
+                    folhaTotal += salario * 1.1;
+                } else {
+                    folhaTotal += salario;
+                }
+            }
+            
+            document.getElementById('custoFolha').textContent = `R$ ${folhaTotal.toFixed(2)}`;
+            
+            // Custos operacionais
+            document.getElementById('custoAluguel').textContent = `R$ ${custos.aluguel.toFixed(2)}`;
+            document.getElementById('custoUtilidades').textContent = `R$ ${custos.utilidades.toFixed(2)}`;
+            document.getElementById('custoContadorMensal').textContent = `R$ ${(custos.contador * 0.4).toFixed(2)}`;
+            
+            const totalMensal = folhaTotal + custos.aluguel + custos.utilidades + (custos.contador * 0.4);
+            document.getElementById('totalMensal').textContent = `R$ ${totalMensal.toFixed(2)}`;
+            
+            // Salvar no estado
+            estado.custos = {
+                abertura: totalAbertura,
+                mensal: totalMensal,
+                folha: folhaTotal,
+                detalhes: custos
+            };
         }
 
-        document.getElementById(
-          'custoFolha'
-        ).textContent = `R$ ${folhaTotal.toFixed(2)}`;
-
-        // Custos operacionais
-        document.getElementById(
-          'custoAluguel'
-        ).textContent = `R$ ${custos.aluguel.toFixed(2)}`;
-        document.getElementById(
-          'custoUtilidades'
-        ).textContent = `R$ ${custos.utilidades.toFixed(2)}`;
-        document.getElementById('custoContadorMensal').textContent = `R$ ${(
-          custos.contador * 0.4
-        ).toFixed(2)}`;
-
-        const totalMensal =
-          folhaTotal +
-          custos.aluguel +
-          custos.utilidades +
-          custos.contador * 0.4;
-        document.getElementById(
-          'totalMensal'
-        ).textContent = `R$ ${totalMensal.toFixed(2)}`;
-
-        // Salvar no estado
-        estado.custos = {
-          abertura: totalAbertura,
-          mensal: totalMensal,
-          folha: folhaTotal,
-          detalhes: custos,
-        };
-      }
-
-      // Função para calcular resultados finais
-      function calcularResultados() {
-        calcularCustos();
-
-        const capitalInicial =
-          parseFloat(document.getElementById('capitalInicial').value) || 0;
-        const custoAbertura = estado.custos.abertura || 0;
-        const custoMensal = estado.custos.mensal || 0;
-
-        // Investimento total (abertura + 3 meses de operação)
-        const investimentoTotal = custoAbertura + custoMensal * 3;
-
-        document.getElementById(
-          'investimentoTotal'
-        ).textContent = `R$ ${investimentoTotal.toFixed(2)}`;
-
-        // Status do capital
-        const statusDiv = document.getElementById('statusCapital');
-        if (capitalInicial >= investimentoTotal) {
-          statusDiv.innerHTML = `✅ Capital suficiente! Sobra: R$ ${(
-            capitalInicial - investimentoTotal
-          ).toFixed(2)}`;
-          statusDiv.style.color = 'green';
-        } else {
-          statusDiv.innerHTML = `❌ Capital insuficiente! Falta: R$ ${(
-            investimentoTotal - capitalInicial
-          ).toFixed(2)}`;
-          statusDiv.style.color = 'red';
-        }
-
-        // Análise de viabilidade
-        const analiseDiv = document.getElementById('analiseViabilidade');
-        const viavel = capitalInicial >= investimentoTotal;
-
-        analiseDiv.innerHTML = `
-                <div class="alert ${
-                  viavel ? 'alert-success' : 'alert-warning'
-                }">
+        // Função para calcular resultados finais
+        function calcularResultados() {
+            calcularCustos();
+            
+            const capitalInicial = parseFloat(document.getElementById('capitalInicial').value) || 0;
+            const custoAbertura = estado.custos.abertura || 0;
+            const custoMensal = estado.custos.mensal || 0;
+            
+            // Investimento total (abertura + 3 meses de operação)
+            const investimentoTotal = custoAbertura + (custoMensal * 3);
+            
+            document.getElementById('investimentoTotal').textContent = `R$ ${investimentoTotal.toFixed(2)}`;
+            
+            // Status do capital
+            const statusDiv = document.getElementById('statusCapital');
+            if (capitalInicial >= investimentoTotal) {
+                statusDiv.innerHTML = `✅ Capital suficiente! Sobra: R$ ${(capitalInicial - investimentoTotal).toFixed(2)}`;
+                statusDiv.style.color = 'green';
+            } else {
+                statusDiv.innerHTML = `❌ Capital insuficiente! Falta: R$ ${(investimentoTotal - capitalInicial).toFixed(2)}`;
+                statusDiv.style.color = 'red';
+            }
+            
+            // Análise de viabilidade
+            const analiseDiv = document.getElementById('analiseViabilidade');
+            const viavel = capitalInicial >= investimentoTotal;
+            
+            analiseDiv.innerHTML = `
+                <div class="alert ${viavel ? 'alert-success' : 'alert-warning'}">
                     <h4>Análise de Viabilidade</h4>
-                    <p><strong>Status:</strong> ${
-                      viavel ? '✅ Viável' : '⚠️ Necessita mais capital'
-                    }</p>
-                    <p><strong>Capital Inicial:</strong> R$ ${capitalInicial.toFixed(
-                      2
-                    )}</p>
-                    <p><strong>Investimento Necessário:</strong> R$ ${investimentoTotal.toFixed(
-                      2
-                    )}</p>
-                    <p><strong>Custos Mensais:</strong> R$ ${custoMensal.toFixed(
-                      2
-                    )}</p>
-                    <p><strong>Ponto de Equilíbrio:</strong> Aproximadamente ${Math.ceil(
-                      investimentoTotal / (custoMensal * 0.3)
-                    )} meses</p>
+                    <p><strong>Status:</strong> ${viavel ? '✅ Viável' : '⚠️ Necessita mais capital'}</p>
+                    <p><strong>Capital Inicial:</strong> R$ ${capitalInicial.toFixed(2)}</p>
+                    <p><strong>Investimento Necessário:</strong> R$ ${investimentoTotal.toFixed(2)}</p>
+                    <p><strong>Custos Mensais:</strong> R$ ${custoMensal.toFixed(2)}</p>
+                    <p><strong>Ponto de Equilíbrio:</strong> Aproximadamente ${Math.ceil(investimentoTotal / (custoMensal * 0.3))} meses</p>
                 </div>
             `;
-
-        // Gerar gráficos
-        gerarGraficos();
-
-        showTab('resultado');
-      }
-
-      // Função para gerar gráficos
-      function gerarGraficos() {
-        // Gráfico de custos
-        const ctxCustos = document
-          .getElementById('chartCustos')
-          .getContext('2d');
-
-        // Destruir gráfico anterior se existir
-        if (estado.graficos.custos) {
-          estado.graficos.custos.destroy();
+            
+            // Gerar gráficos
+            gerarGraficos();
+            
+            showTab('resultado');
         }
 
-        estado.graficos.custos = new Chart(ctxCustos, {
-          type: 'pie',
-          data: {
-            labels: [
-              'Documentação',
-              'Funcionários',
-              'Aluguel',
-              'Utilidades',
-              'Contador',
-            ],
-            datasets: [
-              {
-                data: [
-                  estado.custos.abertura,
-                  estado.custos.folha,
-                  estado.custos.detalhes.aluguel,
-                  estado.custos.detalhes.utilidades,
-                  estado.custos.detalhes.contador * 0.4,
-                ],
-                backgroundColor: [
-                  '#667eea',
-                  '#764ba2',
-                  '#f093fb',
-                  '#4facfe',
-                  '#43e97b',
-                ],
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              title: {
-                display: true,
-                text: 'Distribuição de Custos',
-              },
-            },
-          },
-        });
-
-        // Gráfico de projeção
-        const ctxProjecao = document
-          .getElementById('chartProjecao')
-          .getContext('2d');
-
-        if (estado.graficos.projecao) {
-          estado.graficos.projecao.destroy();
-        }
-
-        const meses = ['Mês 1', 'Mês 2', 'Mês 3', 'Mês 4', 'Mês 5', 'Mês 6'];
-        const custoAcumulado = [];
-        let acumulado = estado.custos.abertura;
-
-        for (let i = 0; i < 6; i++) {
-          acumulado += estado.custos.mensal;
-          custoAcumulado.push(acumulado);
-        }
-
-        estado.graficos.projecao = new Chart(ctxProjecao, {
-          type: 'line',
-          data: {
-            labels: meses,
-            datasets: [
-              {
-                label: 'Custo Acumulado',
-                data: custoAcumulado,
-                borderColor: '#667eea',
-                backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                tension: 0.1,
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              title: {
-                display: true,
-                text: 'Projeção de Custos (6 meses)',
-              },
-            },
-            scales: {
-              y: {
-                beginAtZero: true,
-                ticks: {
-                  callback: function (value) {
-                    return 'R$ ' + value.toFixed(0);
-                  },
+        // Função para gerar gráficos
+        function gerarGraficos() {
+            // Gráfico de custos
+            const ctxCustos = document.getElementById('chartCustos').getContext('2d');
+            
+            // Destruir gráfico anterior se existir
+            if (estado.graficos.custos) {
+                estado.graficos.custos.destroy();
+            }
+            
+            estado.graficos.custos = new Chart(ctxCustos, {
+                type: 'pie',
+                data: {
+                    labels: ['Documentação', 'Funcionários', 'Aluguel', 'Utilidades', 'Contador'],
+                    datasets: [{
+                        data: [
+                            estado.custos.abertura,
+                            estado.custos.folha,
+                            estado.custos.detalhes.aluguel,
+                            estado.custos.detalhes.utilidades,
+                            estado.custos.detalhes.contador * 0.4
+                        ],
+                        backgroundColor: [
+                            '#667eea',
+                            '#764ba2',
+                            '#f093fb',
+                            '#4facfe',
+                            '#43e97b'
+                        ]
+                    }]
                 },
-              },
-            },
-          },
-        });
-      }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Distribuição de Custos'
+                        }
+                    }
+                }
+            });
+            
+            // Gráfico de projeção
+            const ctxProjecao = document.getElementById('chartProjecao').getContext('2d');
+            
+            if (estado.graficos.projecao) {
+                estado.graficos.projecao.destroy();
+            }
+            
+            const meses = ['Mês 1', 'Mês 2', 'Mês 3', 'Mês 4', 'Mês 5', 'Mês 6'];
+            const custoAcumulado = [];
+            let acumulado = estado.custos.abertura;
+            
+            for (let i = 0; i < 6; i++) {
+                acumulado += estado.custos.mensal;
+                custoAcumulado.push(acumulado);
+            }
+            
+            estado.graficos.projecao = new Chart(ctxProjecao, {
+                type: 'line',
+                data: {
+                    labels: meses,
+                    datasets: [{
+                        label: 'Custo Acumulado',
+                        data: custoAcumulado,
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Projeção de Custos (6 meses)'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'R$ ' + value.toFixed(0);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
 
-      // Função para gerar resumo completo
-      function gerarResumo() {
-        const empresa = {
-          nome: document.getElementById('nomeEmpresa').value,
-          email: document.getElementById('emailContato').value,
-          cidade:
-            document.getElementById('cidade').options[
-              document.getElementById('cidade').selectedIndex
-            ]?.text,
-          capital: document.getElementById('capitalInicial').value,
-          socios: document.getElementById('numeroSocios').value,
-          funcionarios: document.getElementById('qtdFuncionarios').value,
-        };
-
-        let resumo = `
+        // Função para gerar resumo completo
+        function gerarResumo() {
+            const empresa = {
+                nome: document.getElementById('nomeEmpresa').value,
+                email: document.getElementById('emailContato').value,
+                cidade: document.getElementById('cidade').options[document.getElementById('cidade').selectedIndex]?.text,
+                capital: document.getElementById('capitalInicial').value,
+                socios: document.getElementById('numeroSocios').value,
+                funcionarios: document.getElementById('qtdFuncionarios').value
+            };
+            
+            let resumo = `
                 <h4>Dados da Empresa</h4>
                 <p><strong>Nome:</strong> ${empresa.nome || 'Não informado'}</p>
-                <p><strong>Email:</strong> ${
-                  empresa.email || 'Não informado'
-                }</p>
-                <p><strong>Cidade:</strong> ${
-                  empresa.cidade || 'Não informada'
-                }</p>
-                <p><strong>Capital Inicial:</strong> R$ ${
-                  empresa.capital || '0'
-                }</p>
+                <p><strong>Email:</strong> ${empresa.email || 'Não informado'}</p>
+                <p><strong>Cidade:</strong> ${empresa.cidade || 'Não informada'}</p>
+                <p><strong>Capital Inicial:</strong> R$ ${empresa.capital || '0'}</p>
                 <p><strong>Número de Sócios:</strong> ${empresa.socios}</p>
-                <p><strong>Número de Funcionários:</strong> ${
-                  empresa.funcionarios
-                }</p>
+                <p><strong>Número de Funcionários:</strong> ${empresa.funcionarios}</p>
                 
                 <h4>CNAEs</h4>
-                <p><strong>Principal:</strong> ${
-                  estado.cnaePrincipal
-                    ? `${estado.cnaePrincipal.codigo} - ${estado.cnaePrincipal.descricao}`
-                    : 'Não selecionado'
-                }</p>
+                <p><strong>Principal:</strong> ${estado.cnaePrincipal ? `${estado.cnaePrincipal.codigo} - ${estado.cnaePrincipal.descricao}` : 'Não selecionado'}</p>
             `;
-
-        if (estado.cnaesSecundarios.length > 0) {
-          resumo += '<p><strong>Secundários:</strong></p><ul>';
-          estado.cnaesSecundarios.forEach((cnae) => {
-            if (cnae.codigo) {
-              resumo += `<li>${cnae.codigo} - ${cnae.descricao}</li>`;
+            
+            if (estado.cnaesSecundarios.length > 0) {
+                resumo += '<p><strong>Secundários:</strong></p><ul>';
+                estado.cnaesSecundarios.forEach(cnae => {
+                    if (cnae.codigo) {
+                        resumo += `<li>${cnae.codigo} - ${cnae.descricao}</li>`;
+                    }
+                });
+                resumo += '</ul>';
             }
-          });
-          resumo += '</ul>';
-        }
-
-        resumo += `
+            
+            resumo += `
                 <h4>Custos</h4>
-                <p><strong>Custos de Abertura:</strong> R$ ${
-                  estado.custos.abertura?.toFixed(2) || '0.00'
-                }</p>
-                <p><strong>Custos Mensais:</strong> R$ ${
-                  estado.custos.mensal?.toFixed(2) || '0.00'
-                }</p>
-                <p><strong>Investimento Total (3 meses):</strong> R$ ${(
-                  (estado.custos.abertura || 0) +
-                  (estado.custos.mensal || 0) * 3
-                ).toFixed(2)}</p>
+                <p><strong>Custos de Abertura:</strong> R$ ${estado.custos.abertura?.toFixed(2) || '0.00'}</p>
+                <p><strong>Custos Mensais:</strong> R$ ${estado.custos.mensal?.toFixed(2) || '0.00'}</p>
+                <p><strong>Investimento Total (3 meses):</strong> R$ ${((estado.custos.abertura || 0) + ((estado.custos.mensal || 0) * 3)).toFixed(2)}</p>
             `;
-
-        document.getElementById('resumoCompleto').innerHTML = resumo;
-      }
-
-      // Função para enviar relatório por email
-      function enviarRelatorio() {
-        const email =
-          document.getElementById('emailRelatorio').value ||
-          document.getElementById('emailContato').value;
-
-        if (!email) {
-          alert('Por favor, informe um email válido');
-          return;
+            
+            document.getElementById('resumoCompleto').innerHTML = resumo;
         }
 
-        // Gerar resumo
-        gerarResumo();
-
-        // Preparar dados do email
-        const templateParams = {
-          to_email: email,
-          empresa_nome:
-            document.getElementById('nomeEmpresa').value || 'Empresa',
-          resumo: document
-            .getElementById('resumoCompleto')
-            .innerHTML.replace(/<[^>]*>/g, ' '),
-        };
-
-        // Mostrar loading
-        document.getElementById('statusEnvio').innerHTML =
-          '<div class="loading active"><div class="spinner"></div><p>Enviando relatório...</p></div>';
-
-        // Simular envio (substitua com EmailJS real)
-        setTimeout(() => {
-          document.getElementById('statusEnvio').innerHTML = `
+        // Função para enviar relatório por email
+        function enviarRelatorio() {
+            const email = document.getElementById('emailRelatorio').value || document.getElementById('emailContato').value;
+            
+            if (!email) {
+                alert('Por favor, informe um email válido');
+                return;
+            }
+            
+            // Gerar resumo
+            gerarResumo();
+            
+            // Preparar dados do email
+            const templateParams = {
+                to_email: email,
+                empresa_nome: document.getElementById('nomeEmpresa').value || 'Empresa',
+                resumo: document.getElementById('resumoCompleto').innerHTML.replace(/<[^>]*>/g, ' ')
+            };
+            
+            // Mostrar loading
+            document.getElementById('statusEnvio').innerHTML = '<div class="loading active"><div class="spinner"></div><p>Enviando relatório...</p></div>';
+            
+            // Simular envio (substitua com EmailJS real)
+            setTimeout(() => {
+                document.getElementById('statusEnvio').innerHTML = `
                     <div class="alert alert-success">
                         ✅ Relatório enviado com sucesso para ${email}!
                     </div>
                 `;
-        }, 2000);
-
-        // Para usar EmailJS de verdade:
-        emailjs
-          .send('service_poab97r', 'template_ib4ousd', templateParams)
-          .then(
-            function (response) {
-              document.getElementById('statusEnvio').innerHTML = `
+            }, 2000);
+            
+             
+            // Para usar EmailJS de verdade:
+            emailjs.send('EnkBeiIKu-X8maD-Y', 'YOUR_TEMPLATE_ID', templateParams)
+                .then(function(response) {
+                    document.getElementById('statusEnvio').innerHTML = `
                         <div class="alert alert-success">
                             ✅ Relatório enviado com sucesso para ${email}!
                         </div>
                     `;
-            },
-            function (error) {
-              document.getElementById('statusEnvio').innerHTML = `
+                }, function(error) {
+                    document.getElementById('statusEnvio').innerHTML = `
                         <div class="alert alert-danger">
                             ❌ Erro ao enviar: ${error.text}
                         </div>
                     `;
-            }
-          );
-      }
-
-      // Inicialização
-      document.addEventListener('DOMContentLoaded', function () {
-        // Gerar resumo ao carregar a página de relatório
-        const tabRelatorio = document.getElementById('relatorio');
-        const observer = new MutationObserver(function (mutations) {
-          mutations.forEach(function (mutation) {
-            if (mutation.target.classList.contains('active')) {
-              gerarResumo();
-            }
-          });
-        });
-
-        observer.observe(tabRelatorio, {
-          attributes: true,
-          attributeFilter: ['class'],
-        });
-      });
-
-      // Prevenir zoom no iOS ao focar em inputs
-      document.addEventListener('touchstart', function (event) {
-        if (event.touches.length > 1) {
-          event.preventDefault();
+                });
+            */
         }
-      });
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gerar resumo ao carregar a página de relatório
+            const tabRelatorio = document.getElementById('relatorio');
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.target.classList.contains('active')) {
+                        gerarResumo();
+                    }
+                });
+            });
+            
+            observer.observe(tabRelatorio, { attributes: true, attributeFilter: ['class'] });
+        });
+
+        // Prevenir zoom no iOS ao focar em inputs
+        document.addEventListener('touchstart', function(event) {
+            if (event.touches.length > 1) {
+                event.preventDefault();
+            }
+        });
     </script>
-  </body>
+</body>
 </html>
